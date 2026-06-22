@@ -1,0 +1,49 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+
+# Docker
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.user
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+coverage.xml
+
+# Alembic (keep versions dir but not cache)
+backend/alembic/__pycache__/
+
+# Qdrant local storage
+qdrant_storage/
