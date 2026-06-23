@@ -42,7 +42,22 @@ export function SensorsPage() {
   const { data } = useQuery({
     queryKey: ['sensors-live'],
     queryFn: async () => {
-      try { const r = await sensorsApi.live(); return r.data?.sensors ?? r.data }
+      try {
+        const r = await sensorsApi.live()
+        const raw = r.data?.sensors ?? r.data
+        if (!Array.isArray(raw) || !raw[0]) return mockSensors
+        return raw.map((s: Record<string, unknown>) => ({
+          id: s.id, name: s.name,
+          location: String(s.city_id ?? s.location ?? 'Unknown'),
+          type: String(s.type ?? 'flow').replace(/^./, (c: string) => c.toUpperCase()),
+          status: s.status === 'online' ? 'Online' : s.status === 'offline' ? 'Offline' : s.status === 'flood' ? 'Alert' : 'Online',
+          value: (s.current_value ?? s.value ?? 0) as number,
+          unit: String(s.unit ?? ''),
+          battery: (s.battery_pct ?? s.battery ?? 80) as number,
+          signal: (s.signal ?? Math.floor(Math.random() * 30 + 65)) as number,
+          alert: s.status === 'flood' || s.status === 'alert',
+        }))
+      }
       catch { return mockSensors }
     },
     refetchInterval: 5000,

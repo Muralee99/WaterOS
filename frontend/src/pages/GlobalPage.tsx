@@ -46,7 +46,23 @@ export function GlobalPage() {
   const { data } = useQuery({
     queryKey: ['global-dashboard'],
     queryFn: async () => {
-      try { return (await globalApi.dashboard()).data }
+      try {
+        const r = await globalApi.dashboard()
+        const d = r.data
+        return {
+          water_health_score: d.global_water_health_score ?? d.water_health_score ?? mockDashboard.water_health_score,
+          ai_confidence: d.ai_confidence_score ?? d.ai_confidence ?? mockDashboard.ai_confidence,
+          countries_monitored: d.countries_monitored ?? mockDashboard.countries_monitored,
+          reservoirs: d.reservoirs ?? mockDashboard.reservoirs,
+          sensors_online: d.sensors_online ?? mockDashboard.sensors_online,
+          active_agents: d.active_agents ?? mockDashboard.active_agents,
+          flood_risks: d.flood_risks ?? mockDashboard.flood_risks,
+          drought_risks: d.drought_risks ?? mockDashboard.drought_risks,
+          water_quality_index: d.water_quality_index ?? mockDashboard.water_quality_index,
+          leak_detection_count: d.leak_detection_count ?? mockDashboard.leak_detection_count,
+          emergency_incidents: d.emergency_incidents ?? mockDashboard.emergency_incidents,
+        }
+      }
       catch { return mockDashboard }
     },
     refetchInterval: 30000,

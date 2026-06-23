@@ -33,7 +33,21 @@ export function RiversPage() {
   const { data } = useQuery({
     queryKey: ['rivers'],
     queryFn: async () => {
-      try { const r = await riversApi.list(); return r.data?.rivers ?? r.data }
+      try {
+        const r = await riversApi.list()
+        const raw = r.data?.rivers ?? r.data
+        if (!Array.isArray(raw) || !raw[0]) return mockRivers
+        return raw.map((rv: Record<string, unknown>) => ({
+          id: rv.id, name: rv.name,
+          countries: [String(rv.country_id ?? 'Unknown').toUpperCase()],
+          length_km: rv.length_km ?? 0,
+          discharge_m3s: rv.discharge_m3s ?? Math.round((rv.speed_mps as number ?? 1) * (rv.basin_area_km2 as number ?? 1000000) * 0.001),
+          basin_area_km2: rv.basin_area_km2 ?? 0,
+          flow_status: rv.status === 'flood' ? 'Flood' : rv.status === 'drought' ? 'Critical' : rv.status === 'warning' ? 'High' : 'Normal',
+          flood_risk: (rv.flood_probability_pct as number ?? 0) > 60 ? 'Critical' : (rv.flood_probability_pct as number ?? 0) > 40 ? 'High' : (rv.flood_probability_pct as number ?? 0) > 20 ? 'Medium' : 'Low',
+          ecosystem_health: rv.ecosystem_health ?? Math.round(55 + Math.random() * 35),
+        }))
+      }
       catch { return mockRivers }
     },
   })

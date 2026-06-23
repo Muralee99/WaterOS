@@ -25,10 +25,31 @@ const typeColors: Record<string, string> = {
   Emergency: 'text-red-400 bg-red-500/10 border-red-500/20',
 }
 
+const SUGGESTED_TITLES: Record<string, string> = {
+  Executive: 'Global Water Security Assessment Q3 2026',
+  Technical: 'Reservoir Capacity Optimization — Technical Analysis',
+  Country: 'India National Water Budget — Monsoon Season 2026',
+  Scientific: 'Groundwater Depletion: Satellite & AI Analysis 2026',
+  Operational: 'Infrastructure Leak Detection & Pipeline Audit',
+  Emergency: 'Flood Emergency Situation Report — South Asia',
+}
+
+const AGENT_BY_TYPE: Record<string, string> = {
+  Executive: 'Global Coordinator Agent',
+  Technical: 'Decision Agent',
+  Country: 'Country Agent',
+  Scientific: 'Climate Agent',
+  Operational: 'Leak Detection Agent',
+  Emergency: 'Emergency Agent',
+}
+
+type Report = { id: string; title: string; type: string; status: string; generated_by: string; created_at: string; size_mb: number; pages: number }
+
 export function ReportsPage() {
   const [showGenerate, setShowGenerate] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [generated, setGenerated] = useState(false)
+  const [localReports, setLocalReports] = useState<Report[]>([])
   const [form, setForm] = useState({ title: '', type: 'Executive', scope: 'Global', agents: [] as string[] })
 
   const { data } = useQuery({
@@ -38,12 +59,26 @@ export function ReportsPage() {
       catch { return mockReports }
     },
   })
-  const reports = data ?? mockReports
+  const reports = [...localReports, ...(data ?? mockReports)] as Report[]
 
   const handleGenerate = async () => {
     setGenerating(true)
     try { await reportsApi.generate(form) } catch { }
-    setTimeout(() => { setGenerating(false); setGenerated(true) }, 3000)
+    setTimeout(() => {
+      setGenerating(false)
+      setGenerated(true)
+      const newReport: Report = {
+        id: `r${Date.now()}`,
+        title: form.title || SUGGESTED_TITLES[form.type],
+        type: form.type,
+        status: 'Ready',
+        generated_by: AGENT_BY_TYPE[form.type] ?? 'Global Coordinator',
+        created_at: new Date().toISOString().slice(0, 10),
+        size_mb: parseFloat((Math.random() * 5 + 1).toFixed(1)),
+        pages: Math.floor(Math.random() * 40 + 12),
+      }
+      setLocalReports(prev => [newReport, ...prev])
+    }, 3000)
   }
 
   return (
@@ -153,14 +188,15 @@ export function ReportsPage() {
                       <input
                         value={form.title}
                         onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                        placeholder="e.g. Asia Pacific Water Security Q3 2026"
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50"
+                        placeholder={SUGGESTED_TITLES[form.type]}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/50"
                       />
+                      <button onClick={() => setForm(f => ({ ...f, title: SUGGESTED_TITLES[f.type] }))} className="mt-1 text-[10px] text-blue-400 hover:text-blue-300">Use suggested title</button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs text-slate-400 mb-1.5">Report Type</label>
-                        <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
+                        <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value, title: '' }))}
                           className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
                           {REPORT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>

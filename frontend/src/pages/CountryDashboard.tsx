@@ -56,7 +56,41 @@ export function CountryDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['country-dashboard', countryId],
     queryFn: async () => {
-      try { return (await countriesApi.dashboard(countryId!)).data }
+      try {
+        const r = await countriesApi.dashboard(countryId!)
+        const d = r.data
+        if (!d?.national_water_score && !d?.country) return mockDashboardData(countryId ?? 'india')
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        return {
+          name: d.country?.name ?? (countryId?.charAt(0).toUpperCase() + (countryId?.slice(1) ?? '')),
+          emoji: d.country?.code === 'IN' ? '🇮🇳' : d.country?.code === 'US' ? '🇺🇸' : d.country?.code === 'CN' ? '🇨🇳' : d.country?.code === 'BR' ? '🇧🇷' : d.country?.code === 'AU' ? '🇦🇺' : d.country?.code === 'DE' ? '🇩🇪' : d.country?.code === 'JP' ? '🇯🇵' : d.country?.code === 'EG' ? '🇪🇬' : '🌍',
+          continent: d.country?.continent ?? 'Asia',
+          national_water_score: d.national_water_score ?? 70,
+          reservoir_capacity: d.reservoir_capacity?.current_pct ?? d.reservoir_capacity ?? 70,
+          river_status: d.river_status?.[0] ? (d.river_status[0].status?.charAt(0).toUpperCase() + d.river_status[0].status?.slice(1)) : 'Normal',
+          ai_confidence: Math.round((d.ai_insights?.confidence_score ?? 0.88) * 100),
+          active_alerts: d.government_alerts?.length ?? 1,
+          ai_recommendations: (d.ai_recommendations ?? []).map((rec: Record<string,unknown>) => ({
+            text: rec.recommendation ?? rec.text ?? '',
+            confidence: typeof rec.confidence === 'number' ? (rec.confidence <= 1 ? Math.round(rec.confidence * 100) : rec.confidence) : 85,
+            agents: (rec.agents as string[]) ?? ['Country Agent', 'AI Engine'],
+          })),
+          government_alerts: (d.government_alerts ?? []).map((a: Record<string,unknown>) => ({
+            text: a.message ?? a.text ?? '',
+            severity: a.level === 'red' ? 'Critical' : a.level === 'orange' ? 'High' : a.level === 'yellow' ? 'Medium' : 'Low',
+          })),
+          historical_trends: MONTHS.map((m, i) => ({
+            month: m,
+            water_level: Array.isArray(d.historical_trends?.water_level) ? d.historical_trends.water_level[i] ?? 60 : 60 + Math.sin(i * 0.5) * 20,
+            rainfall: Array.isArray(d.historical_trends?.rainfall_mm) ? d.historical_trends.rainfall_mm[i] ?? 40 : 40 + Math.sin(i * 0.4) * 25,
+          })),
+          water_demand: MONTHS.map((m, i) => ({
+            month: m,
+            demand: Array.isArray(d.water_demand) ? (d.water_demand[i] ?? 900) : 900 + i * 15,
+            supply: Array.isArray(d.water_supply) ? (d.water_supply[i] ?? 850) : 850 + i * 12,
+          })),
+        }
+      }
       catch { return mockDashboardData(countryId ?? 'india') }
     },
   })
