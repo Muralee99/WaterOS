@@ -4,6 +4,27 @@
 
 WaterOS is an enterprise-grade, AI-first platform that uses autonomous agents to monitor, predict, optimize, and protect global water resources. It demonstrates multi-agent collaboration, MCP tooling, and explainable AI in a real-world domain.
 
+## Demo
+
+[![Demo Video](https://img.shields.io/badge/Watch%20Demo-YouTube-red?logo=youtube&style=for-the-badge)](https://youtube.com)
+[![Live App](https://img.shields.io/badge/Live%20App-localhost%3A3000-blue?logo=docker&style=for-the-badge)](http://localhost:3000)
+
+> **Login:** `admin@wateros.ai` / `admin123`
+
+| Dashboard — KPIs + AI Reasoning Feed | Global Intelligence — 195 Countries |
+|--------------------------------------|-------------------------------------|
+| ![Dashboard](demo/screenshots/02-dashboard.png) | ![Global](demo/screenshots/03-global.png) |
+
+| Countries Drill-Down | Live Sensor Grid (5s refresh) |
+|----------------------|-------------------------------|
+| ![Countries](demo/screenshots/04-countries.png) | ![Sensors](demo/screenshots/07-sensors.png) |
+
+| Agent Console — 13 ADK Agents | Knowledge Graph — 60 Nodes |
+|-------------------------------|---------------------------|
+| ![Agents](demo/screenshots/11-agents.png) | ![Graph](demo/screenshots/13-knowledge-graph.png) |
+
+> **To generate screenshots:** `docker compose up -d && node scripts/take-screenshots.mjs`
+
 ## Architecture
 
 ```
