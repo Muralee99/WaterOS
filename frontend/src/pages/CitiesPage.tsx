@@ -32,7 +32,28 @@ export function CitiesPage() {
   const { data } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      try { const r = await citiesApi.list(); return r.data?.cities ?? r.data }
+      try {
+        const r = await citiesApi.list()
+        const raw = r.data?.cities ?? r.data
+        if (!Array.isArray(raw) || !raw[0]) return mockCities
+        const countryFromState = (sid: string) => {
+          const m: Record<string,string> = { 'in-': 'India', 'us-': 'USA', 'br-': 'Brazil', 'cn-': 'China', 'de-': 'Germany', 'fr-': 'France', 'jp-': 'Japan', 'au-': 'Australia' }
+          return Object.entries(m).find(([k]) => sid?.startsWith(k))?.[1] ?? 'Unknown'
+        }
+        return raw.map((c: Record<string, unknown>) => {
+          const score = (c.water_quality_score ?? c.water_score ?? 65) as number
+          const status = score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : score >= 55 ? 'Warning' : 'Critical'
+          return {
+            id: c.id, name: c.name,
+            country: countryFromState(String(c.state_id ?? '')),
+            population: Math.round(((c.population as number ?? 5000000) / 1e6) * 10) / 10,
+            water_score: score,
+            supply_deficit: Math.round(((c.leak_count as number ?? 0) / ((c.water_consumption_mld as number ?? 1000) + 1)) * 100),
+            treatment_capacity: (c.pipeline_health_pct ?? c.treatment_capacity ?? 70) as number,
+            status,
+          }
+        })
+      }
       catch { return mockCities }
     },
   })
