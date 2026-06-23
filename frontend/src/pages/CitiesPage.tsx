@@ -32,7 +32,7 @@ export function CitiesPage() {
   const { data } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
-      try { return (await citiesApi.list()).data }
+      try { const r = await citiesApi.list(); return r.data?.cities ?? r.data }
       catch { return mockCities }
     },
   })

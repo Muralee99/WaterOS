@@ -53,7 +53,7 @@ export function ClimatePage() {
   const { data } = useQuery({
     queryKey: ['climate-global'],
     queryFn: async () => {
-      try { return (await climateApi.global()).data }
+      try { const r = await climateApi.global(); const d = r.data; return d?.avg_temperature_c != null ? d : mockGlobalClimate }
       catch { return mockGlobalClimate }
     },
     refetchInterval: 60000,

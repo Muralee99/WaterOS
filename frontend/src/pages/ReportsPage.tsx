@@ -34,7 +34,7 @@ export function ReportsPage() {
   const { data } = useQuery({
     queryKey: ['reports'],
     queryFn: async () => {
-      try { return (await reportsApi.list()).data }
+      try { const r = await reportsApi.list(); return r.data?.reports ?? r.data }
       catch { return mockReports }
     },
   })

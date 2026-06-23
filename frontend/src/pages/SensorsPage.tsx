@@ -42,7 +42,7 @@ export function SensorsPage() {
   const { data } = useQuery({
     queryKey: ['sensors-live'],
     queryFn: async () => {
-      try { return (await sensorsApi.live()).data }
+      try { const r = await sensorsApi.live(); return r.data?.sensors ?? r.data }
       catch { return mockSensors }
     },
     refetchInterval: 5000,

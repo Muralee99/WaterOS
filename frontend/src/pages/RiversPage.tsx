@@ -33,7 +33,7 @@ export function RiversPage() {
   const { data } = useQuery({
     queryKey: ['rivers'],
     queryFn: async () => {
-      try { return (await riversApi.list()).data }
+      try { const r = await riversApi.list(); return r.data?.rivers ?? r.data }
       catch { return mockRivers }
     },
   })

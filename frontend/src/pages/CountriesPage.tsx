@@ -43,7 +43,7 @@ export function CountriesPage() {
   const { data } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
-      try { return (await countriesApi.list()).data }
+      try { const r = await countriesApi.list(); return r.data?.countries ?? r.data }
       catch { return mockCountries }
     },
   })

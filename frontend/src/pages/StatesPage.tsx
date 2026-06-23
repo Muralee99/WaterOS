@@ -33,7 +33,7 @@ export function StatesPage() {
   const { data } = useQuery({
     queryKey: ['states'],
     queryFn: async () => {
-      try { return (await statesApi.list()).data }
+      try { const r = await statesApi.list(); return r.data?.states ?? r.data }
       catch { return mockStates }
     },
   })

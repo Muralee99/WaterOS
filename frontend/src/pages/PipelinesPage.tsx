@@ -31,7 +31,7 @@ export function PipelinesPage() {
   const { data } = useQuery({
     queryKey: ['pipelines'],
     queryFn: async () => {
-      try { return (await pipelinesApi.list()).data }
+      try { const r = await pipelinesApi.list(); return r.data?.pipelines ?? r.data }
       catch { return mockPipelines }
     },
   })
