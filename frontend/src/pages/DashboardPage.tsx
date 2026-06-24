@@ -3,15 +3,33 @@ import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Droplets, Waves, AlertTriangle, Activity,
-  Bot, Shield, Zap, TrendingUp, Brain, CheckCircle
+  Bot, Shield, Zap, TrendingUp, Brain, CheckCircle, ChevronDown
 } from 'lucide-react'
 import { dashboardApi } from '@/services/api'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { GlassCard } from '@/components/ui/GlassCard'
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, RadialBarChart, RadialBar
+  Tooltip, ResponsiveContainer
 } from 'recharts'
+
+const COUNTRIES = [
+  { id: 'india',      name: 'India',         emoji: '🇮🇳', water_score: 68.4, reservoirs: 5,  sensors: 142, flood_risk: 'High',   quality: 71.2, leaks: 4,  alerts: 12, agents: 7,  reservoir_pct: 71, ai_acc: 92.1 },
+  { id: 'usa',        name: 'United States',  emoji: '🇺🇸', water_score: 82.1, reservoirs: 8,  sensors: 284, flood_risk: 'Medium', quality: 88.4, leaks: 2,  alerts: 5,  agents: 6,  reservoir_pct: 79, ai_acc: 95.3 },
+  { id: 'china',      name: 'China',          emoji: '🇨🇳', water_score: 72.3, reservoirs: 12, sensors: 310, flood_risk: 'High',   quality: 74.6, leaks: 6,  alerts: 18, agents: 9,  reservoir_pct: 81, ai_acc: 91.8 },
+  { id: 'brazil',     name: 'Brazil',         emoji: '🇧🇷', water_score: 76.8, reservoirs: 4,  sensors: 98,  flood_risk: 'Medium', quality: 79.2, leaks: 3,  alerts: 7,  agents: 5,  reservoir_pct: 74, ai_acc: 90.2 },
+  { id: 'australia',  name: 'Australia',      emoji: '🇦🇺', water_score: 70.5, reservoirs: 3,  sensors: 74,  flood_risk: 'Low',    quality: 83.1, leaks: 1,  alerts: 4,  agents: 5,  reservoir_pct: 52, ai_acc: 94.7 },
+  { id: 'egypt',      name: 'Egypt',          emoji: '🇪🇬', water_score: 54.2, reservoirs: 2,  sensors: 38,  flood_risk: 'Low',    quality: 58.9, leaks: 8,  alerts: 22, agents: 4,  reservoir_pct: 41, ai_acc: 87.3 },
+  { id: 'germany',    name: 'Germany',        emoji: '🇩🇪', water_score: 88.4, reservoirs: 6,  sensors: 118, flood_risk: 'Low',    quality: 92.7, leaks: 1,  alerts: 2,  agents: 5,  reservoir_pct: 85, ai_acc: 96.8 },
+  { id: 'japan',      name: 'Japan',          emoji: '🇯🇵', water_score: 84.7, reservoirs: 7,  sensors: 162, flood_risk: 'Medium', quality: 90.3, leaks: 1,  alerts: 3,  agents: 6,  reservoir_pct: 78, ai_acc: 95.9 },
+  { id: 'canada',     name: 'Canada',         emoji: '🇨🇦', water_score: 91.2, reservoirs: 9,  sensors: 132, flood_risk: 'Low',    quality: 94.1, leaks: 0,  alerts: 1,  agents: 5,  reservoir_pct: 88, ai_acc: 97.2 },
+  { id: 'nigeria',    name: 'Nigeria',        emoji: '🇳🇬', water_score: 49.8, reservoirs: 2,  sensors: 28,  flood_risk: 'High',   quality: 51.4, leaks: 11, alerts: 31, agents: 4,  reservoir_pct: 38, ai_acc: 84.6 },
+  { id: 'russia',     name: 'Russia',         emoji: '🇷🇺', water_score: 79.3, reservoirs: 11, sensors: 198, flood_risk: 'Low',    quality: 81.7, leaks: 3,  alerts: 6,  agents: 7,  reservoir_pct: 82, ai_acc: 93.4 },
+  { id: 'indonesia',  name: 'Indonesia',      emoji: '🇮🇩', water_score: 65.1, reservoirs: 3,  sensors: 64,  flood_risk: 'High',   quality: 67.8, leaks: 7,  alerts: 14, agents: 5,  reservoir_pct: 61, ai_acc: 88.9 },
+  { id: 'bangladesh', name: 'Bangladesh',     emoji: '🇧🇩', water_score: 52.7, reservoirs: 1,  sensors: 32,  flood_risk: 'Critical',quality: 54.3,leaks: 9,  alerts: 28, agents: 4,  reservoir_pct: 44, ai_acc: 86.1 },
+  { id: 'france',     name: 'France',         emoji: '🇫🇷', water_score: 86.9, reservoirs: 5,  sensors: 104, flood_risk: 'Low',    quality: 91.4, leaks: 1,  alerts: 2,  agents: 5,  reservoir_pct: 83, ai_acc: 96.1 },
+  { id: 'argentina',  name: 'Argentina',      emoji: '🇦🇷', water_score: 74.6, reservoirs: 4,  sensors: 68,  flood_risk: 'Medium', quality: 76.9, leaks: 4,  alerts: 9,  agents: 5,  reservoir_pct: 68, ai_acc: 91.0 },
+]
 
 const AI_FEED = [
   { agent: 'Global Coordinator', action: 'Coordinating flood response across South Asia', confidence: 94.2 },
@@ -49,6 +67,9 @@ const QUALITY_DATA = [
 export function DashboardPage() {
   const [feed, setFeed] = useState(AI_FEED.slice(0, 4))
   const [feedIdx, setFeedIdx] = useState(4)
+  const [selectedCountryId, setSelectedCountryId] = useState('india')
+
+  const country = COUNTRIES.find(c => c.id === selectedCountryId) ?? COUNTRIES[0]
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,40 +82,66 @@ export function DashboardPage() {
     return () => clearInterval(interval)
   }, [feedIdx])
 
-  const { data: dashboard, isLoading } = useQuery({
-    queryKey: ['dashboard'],
-    queryFn: () => dashboardApi.getData().then((r) => r.data),
+  const { data: dashboard } = useQuery({
+    queryKey: ['dashboard', selectedCountryId],
+    queryFn: async () => {
+      try { return await dashboardApi.getData().then((r) => r.data) }
+      catch { return null }
+    },
     refetchInterval: 30000,
   })
 
   const { data: stats } = useQuery({
     queryKey: ['stats'],
-    queryFn: () => dashboardApi.getStats().then((r) => r.data),
+    queryFn: async () => {
+      try { return await dashboardApi.getStats().then((r) => r.data) }
+      catch { return null }
+    },
     refetchInterval: 60000,
   })
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="w-12 h-12 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-slate-400 text-sm">Loading WaterOS...</p>
-        </div>
-      </div>
-    )
+  const d = {
+    water_health_score:      dashboard?.water_health_score      ?? country.water_score,
+    avg_reservoir_level_pct: dashboard?.avg_reservoir_level_pct ?? country.reservoir_pct,
+    flood_risk:              dashboard?.flood_risk               ?? country.flood_risk,
+    active_agents:           dashboard?.active_agents            ?? country.agents,
+    water_quality_score:     dashboard?.water_quality_score      ?? country.quality,
+    active_leak_alerts:      dashboard?.active_leak_alerts       ?? country.leaks,
+    alerts_today:            dashboard?.alerts_today             ?? country.alerts,
+    total_sensors:           dashboard?.total_sensors            ?? country.sensors,
+    total_reservoirs:        dashboard?.total_reservoirs         ?? country.reservoirs,
+    ai_accuracy:             stats?.ai_predictions_accuracy      ?? country.ai_acc,
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Water Intelligence Dashboard</h1>
+          <h1 className="text-xl font-bold text-white flex items-center gap-2">
+            <span className="text-2xl">{country.emoji}</span>
+            {country.name} — Water Intelligence Dashboard
+          </h1>
           <p className="text-sm text-slate-500 mt-0.5">Real-time monitoring powered by AI agents</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 glass rounded-xl">
-          <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-          <span className="text-xs text-emerald-400">All systems operational</span>
+        <div className="flex items-center gap-3">
+          {/* Country selector */}
+          <div className="relative">
+            <select
+              value={selectedCountryId}
+              onChange={e => setSelectedCountryId(e.target.value)}
+              className="appearance-none bg-white/5 border border-white/10 hover:border-blue-500/40 rounded-xl px-4 py-2 pr-8 text-sm text-white focus:outline-none focus:border-blue-500/60 transition-colors cursor-pointer"
+            >
+              {COUNTRIES.map(c => (
+                <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 glass rounded-xl">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <span className="text-xs text-emerald-400">All systems operational</span>
+          </div>
         </div>
       </div>
 
@@ -103,10 +150,10 @@ export function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.0 }}>
           <MetricCard
             title="Water Health Score"
-            value={dashboard?.water_health_score ?? 88.4}
+            value={d.water_health_score}
             unit="%"
             icon={Shield}
-            status="good"
+            status={d.water_health_score >= 80 ? 'good' : d.water_health_score >= 60 ? 'warning' : 'critical'}
             trend="up"
             trendValue="+2.1% this week"
           />
@@ -114,26 +161,26 @@ export function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <MetricCard
             title="Avg Reservoir Level"
-            value={dashboard?.avg_reservoir_level_pct ?? 67.3}
+            value={d.avg_reservoir_level_pct}
             unit="%"
             icon={Waves}
             status="info"
-            subtitle={`${dashboard?.total_reservoirs ?? 5} reservoirs monitored`}
+            subtitle={`${d.total_reservoirs} reservoirs monitored`}
           />
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <MetricCard
             title="Flood Risk"
-            value={dashboard?.flood_risk?.toUpperCase() ?? 'MEDIUM'}
+            value={String(d.flood_risk).toUpperCase()}
             icon={AlertTriangle}
-            status={dashboard?.flood_risk === 'high' || dashboard?.flood_risk === 'critical' ? 'critical' : 'warning'}
+            status={String(d.flood_risk).toLowerCase() === 'critical' || String(d.flood_risk).toLowerCase() === 'high' ? 'critical' : 'warning'}
             subtitle="Next 24 hours"
           />
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
           <MetricCard
             title="Active Agents"
-            value={dashboard?.active_agents ?? 7}
+            value={d.active_agents}
             icon={Bot}
             status="info"
             trend="stable"
@@ -144,10 +191,10 @@ export function DashboardPage() {
 
       {/* Second KPI Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Water Quality Score" value={dashboard?.water_quality_score ?? 91.2} unit="%" icon={Droplets} status="good" />
-        <MetricCard title="Active Leak Alerts" value={dashboard?.active_leak_alerts ?? 2} icon={Activity} status={dashboard?.active_leak_alerts > 3 ? 'critical' : 'warning'} />
-        <MetricCard title="AI Predictions Accuracy" value={stats?.ai_predictions_accuracy ?? 94.1} unit="%" icon={TrendingUp} status="good" />
-        <MetricCard title="Alerts Today" value={dashboard?.alerts_today ?? 8} icon={Zap} status="warning" subtitle={`${dashboard?.total_sensors ?? 142} sensors active`} />
+        <MetricCard title="Water Quality Score" value={d.water_quality_score} unit="%" icon={Droplets} status={d.water_quality_score >= 80 ? 'good' : 'warning'} />
+        <MetricCard title="Active Leak Alerts" value={d.active_leak_alerts} icon={Activity} status={d.active_leak_alerts > 3 ? 'critical' : 'warning'} />
+        <MetricCard title="AI Predictions Accuracy" value={d.ai_accuracy} unit="%" icon={TrendingUp} status="good" />
+        <MetricCard title="Alerts Today" value={d.alerts_today} icon={Zap} status="warning" subtitle={`${d.total_sensors} sensors active`} />
       </div>
 
       {/* Charts */}
@@ -222,7 +269,7 @@ export function DashboardPage() {
             {[
               { label: 'Agent Executions Today', value: stats?.agent_executions_today ?? 147, icon: Bot, color: 'text-blue-400' },
               { label: 'Avg Response Time', value: `${stats?.avg_response_time_ms ?? 280}ms`, icon: Activity, color: 'text-cyan-400' },
-              { label: 'Leaks Detected', value: stats?.leaks_detected_this_month ?? 7, icon: Droplets, color: 'text-amber-400' },
+              { label: 'Leaks Detected', value: stats?.leaks_detected_this_month ?? d.active_leak_alerts, icon: Droplets, color: 'text-amber-400' },
               { label: 'Water Saved (MCM)', value: stats?.water_saved_mcm ?? 284, icon: TrendingUp, color: 'text-emerald-400' },
             ].map((stat) => (
               <div key={stat.label} className="bg-white/3 rounded-lg p-3">
