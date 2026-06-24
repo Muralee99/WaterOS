@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Droplets, Waves, AlertTriangle, Activity,
-  Bot, Shield, Zap, TrendingUp, Brain, CheckCircle, ChevronDown
+  Bot, Shield, Zap, TrendingUp, Brain, CheckCircle, ChevronDown, Check
 } from 'lucide-react'
 import { dashboardApi } from '@/services/api'
 import { MetricCard } from '@/components/ui/MetricCard'
@@ -68,8 +68,21 @@ export function DashboardPage() {
   const [feed, setFeed] = useState(AI_FEED.slice(0, 4))
   const [feedIdx, setFeedIdx] = useState(4)
   const [selectedCountryId, setSelectedCountryId] = useState('india')
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const country = COUNTRIES.find(c => c.id === selectedCountryId) ?? COUNTRIES[0]
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -125,18 +138,41 @@ export function DashboardPage() {
           <p className="text-sm text-slate-500 mt-0.5">Real-time monitoring powered by AI agents</p>
         </div>
         <div className="flex items-center gap-3">
-          {/* Country selector */}
-          <div className="relative">
-            <select
-              value={selectedCountryId}
-              onChange={e => setSelectedCountryId(e.target.value)}
-              className="appearance-none bg-white/5 border border-white/10 hover:border-blue-500/40 rounded-xl px-4 py-2 pr-8 text-sm text-white focus:outline-none focus:border-blue-500/60 transition-colors cursor-pointer"
+          {/* Country selector — custom dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownOpen(o => !o)}
+              className="flex items-center gap-2 bg-white/5 border border-white/10 hover:border-blue-500/40 rounded-xl px-4 py-2 text-sm text-white transition-colors min-w-[180px]"
             >
-              {COUNTRIES.map(c => (
-                <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+              <span className="text-base">{country.emoji}</span>
+              <span className="flex-1 text-left">{country.name}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {dropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-1 w-52 bg-[#0d1117] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
+                >
+                  <div className="max-h-72 overflow-y-auto py-1">
+                    {COUNTRIES.map(c => (
+                      <button
+                        key={c.id}
+                        onClick={() => { setSelectedCountryId(c.id); setDropdownOpen(false) }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors hover:bg-blue-600/20 ${c.id === selectedCountryId ? 'bg-blue-600/15 text-blue-300' : 'text-slate-300'}`}
+                      >
+                        <span className="text-base">{c.emoji}</span>
+                        <span className="flex-1">{c.name}</span>
+                        {c.id === selectedCountryId && <Check className="w-3 h-3 text-blue-400 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 glass rounded-xl">
             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
