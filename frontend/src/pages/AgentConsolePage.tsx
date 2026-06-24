@@ -2,14 +2,32 @@ import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Bot, Play, CheckCircle, XCircle, Clock, ChevronDown, ChevronRight,
-  Brain, Zap, MessageSquare, Terminal, Loader2, Send
+  Bot, Play, ChevronDown, ChevronRight,
+  Brain, Zap, MessageSquare, Loader2, Send, Globe, Flag, Building2, MapPin
 } from 'lucide-react'
 import { agentApi } from '@/services/api'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { cn } from '@/utils/cn'
-import type { AgentResult, ReasoningStep } from '@/types'
+import type { AgentResult } from '@/types'
 import toast from 'react-hot-toast'
+
+const GEO_DATA: Record<string, { states: Record<string, string[]> }> = {
+  'India':         { states: { 'Maharashtra': ['Mumbai', 'Pune', 'Nagpur'], 'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur'], 'Assam': ['Guwahati', 'Dibrugarh'], 'Punjab': ['Ludhiana', 'Amritsar'] } },
+  'United States': { states: { 'California': ['Los Angeles', 'San Francisco', 'San Diego'], 'Texas': ['Houston', 'Dallas', 'Austin'], 'Florida': ['Miami', 'Orlando', 'Tampa'] } },
+  'China':         { states: { 'Sichuan': ['Chengdu', 'Mianyang'], 'Xinjiang': ['Ürümqi', 'Kashgar'], 'Hubei': ['Wuhan', 'Yichang'] } },
+  'Brazil':        { states: { 'São Paulo': ['São Paulo City', 'Campinas', 'Santos'], 'Amazonas': ['Manaus', 'Parintins'] } },
+  'Australia':     { states: { 'Queensland': ['Brisbane', 'Cairns', 'Townsville'], 'New South Wales': ['Sydney', 'Newcastle'] } },
+  'Germany':       { states: { 'Bavaria': ['Munich', 'Nuremberg', 'Augsburg'], 'Berlin': ['Berlin City'] } },
+  'Egypt':         { states: { 'Cairo Governorate': ['Cairo', 'Giza'], 'Aswan': ['Aswan City', 'Edfu'] } },
+  'Nigeria':       { states: { 'Lagos': ['Lagos City', 'Ikeja'], 'Kano': ['Kano City', 'Wudil'] } },
+  'Japan':         { states: { 'Tokyo': ['Tokyo City', 'Yokohama'], 'Osaka': ['Osaka City', 'Kyoto'] } },
+  'Canada':        { states: { 'Ontario': ['Toronto', 'Ottawa', 'Hamilton'], 'British Columbia': ['Vancouver', 'Victoria'] } },
+  'Russia':        { states: { 'Moscow Oblast': ['Moscow', 'Podolsk'], 'Siberia': ['Novosibirsk', 'Omsk'] } },
+  'Indonesia':     { states: { 'Java': ['Jakarta', 'Surabaya', 'Bandung'], 'Sumatra': ['Medan', 'Palembang'] } },
+  'Bangladesh':    { states: { 'Dhaka Division': ['Dhaka City', 'Narayanganj'], 'Chittagong': ['Chittagong City'] } },
+  'France':        { states: { 'Île-de-France': ['Paris', 'Versailles'], 'Provence': ['Marseille', 'Nice'] } },
+  'Argentina':     { states: { 'Buenos Aires': ['Buenos Aires City', 'La Plata'], 'Mendoza': ['Mendoza City'] } },
+}
 
 const AGENT_COLORS: Record<string, string> = {
   rainfall_agent: '#3B82F6',
@@ -151,6 +169,35 @@ export function AgentConsolePage() {
   const [runningAgents, setRunningAgents] = useState<Set<string>>(new Set())
   const [agentResults, setAgentResults] = useState<Record<string, AgentResult>>({})
   const [tierFilter, setTierFilter] = useState('All')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [selectedState, setSelectedState] = useState('')
+  const [selectedCity, setSelectedCity] = useState('')
+
+  const countries = Object.keys(GEO_DATA)
+  const states = selectedCountry ? Object.keys(GEO_DATA[selectedCountry]?.states ?? {}) : []
+  const cities = selectedCountry && selectedState ? (GEO_DATA[selectedCountry]?.states[selectedState] ?? []) : []
+
+  const geoContext = {
+    ...(selectedCountry && { country: selectedCountry }),
+    ...(selectedState && { state: selectedState }),
+    ...(selectedCity && { city: selectedCity }),
+  }
+
+  const CONTEXT_INSIGHTS: Record<string, { score: number; risk: string; agents: string[]; insights: string[]; alerts: string[] }> = {
+    'India': { score: 68, risk: 'High', agents: ['Country Agent', 'Rainfall Agent', 'Flood Agent'], insights: ['Monsoon onset 2 weeks early — 34% flood probability increase in Brahmaputra basin', 'Groundwater depletion rate: 12cm/year in NW states (critical threshold)', 'Water stress index: 0.71 — ranks 13th globally'], alerts: ['Red alert: 5 Assam districts at flood risk', 'Conservation advisory active in Rajasthan'] },
+    'United States': { score: 82, risk: 'Medium', agents: ['Country Agent', 'Reservoir Agent', 'Leak Detection Agent'], insights: ['Lake Mead at 38% capacity — Southwest water compact under review', 'Aging infrastructure: 240K water main breaks annually, ~14% water loss', 'PFAS contamination detected in 45 public water systems'], alerts: ['Drought watch: Colorado River Basin', 'Infrastructure advisory: Lead pipe replacement priority zones'] },
+    'China': { score: 72, risk: 'Medium', agents: ['Country Agent', 'Flood Agent', 'River Basin Agent'], insights: ['Three Gorges reservoir at 89% — controlled release protocol active', 'North-South Water Diversion: 14.8B m³ transferred this year', 'Yangtze River flow 22% above seasonal average'], alerts: ['Warning: Yangtze flooding risk in 3 downstream provinces'] },
+    'Maharashtra': { score: 65, risk: 'High', agents: ['Reservoir Agent', 'Rainfall Agent', 'Infrastructure Agent'], insights: ['Hirakud reservoir at 91% — overflow risk within 72h', 'Urban water demand exceeds supply by 18% in Greater Mumbai', 'Pipeline network age: avg 32 years, 284 active leak zones'], alerts: ['Overflow alert: Hirakud Dam — controlled release initiated'] },
+    'Rajasthan': { score: 41, risk: 'Critical', agents: ['Groundwater Agent', 'Climate Agent', 'Emergency Agent'], insights: ['Groundwater depth: 42m below surface — critical depletion', 'Rainfall deficit: 38% below 30-year average this season', 'Desertification index: 0.82 — highest in India'], alerts: ['Emergency: Water rationing enforced in 12 districts', 'Critical: Groundwater below extraction threshold'] },
+    'California': { score: 71, risk: 'High', agents: ['Reservoir Agent', 'Leak Detection Agent', 'Water Quality Agent'], insights: ['Shasta Lake at 54% — below historical average for this date', 'Drought conditions: D3 (Extreme) across 41% of state area', 'Desalination plant capacity being scaled: +420 MLD planned'], alerts: ['Drought emergency: Southern California water restrictions Stage 2'] },
+    'Mumbai': { score: 62, risk: 'Warning', agents: ['Infrastructure Agent', 'Leak Detection Agent', 'Water Quality Agent'], insights: ['284 active pipeline leak zones — 680 MLD water loss daily', 'Powai Lake at 91.2% — 8% above safe operating level', 'WTP Bhandup: treating 3,800 MLD, running at 97% capacity', '74.2 WQI — within WHO safe limits, turbidity spike in Zone 7'], alerts: ['Leak priority: 3 trunk main fractures in Dharavi sector', 'Quality notice: Boil water advisory for 2 wards'] },
+    'Delhi': { score: 58, risk: 'Warning', agents: ['Infrastructure Agent', 'Water Quality Agent', 'Emergency Agent'], insights: ['Yamuna WQI at 51 — unsafe for bathing, borderline for treatment', '631 active leak zones, estimated 920 MLD unaccounted water', 'Per capita supply: 172 LPCD vs target 270 LPCD — 36% shortfall'], alerts: ['Quality alert: Yamuna BOD levels 3× safe limit', 'Supply deficit: 12 zones on alternate-day supply schedule'] },
+    'Houston': { score: 79, risk: 'Medium', agents: ['Flood Agent', 'Infrastructure Agent', 'Rainfall Agent'], insights: ['Bayou flood model: 28% probability of street-level flooding in 72h', 'Harvey-era infrastructure upgrades: 71% complete', '1,100 MLD daily demand, 88M gallons storage reserve'], alerts: ['Flood watch: Heavy rainfall forecast 48-72 hours'] },
+    'Los Angeles': { score: 74, risk: 'Medium', agents: ['Reservoir Agent', 'Leak Detection Agent', 'Water Quality Agent'], insights: ['Aqueduct pressure nominal at 4.2 bar — all sectors operational', 'Recycled water usage: 32% of total supply (target 40% by 2027)', '142 low-priority leak zones — all scheduled for Q3 repair'], alerts: ['Conservation mandate: Outdoor watering restricted to 2 days/week'] },
+  }
+
+  const activeInsight = selectedCity ? CONTEXT_INSIGHTS[selectedCity] : selectedState ? CONTEXT_INSIGHTS[selectedState] : selectedCountry ? CONTEXT_INSIGHTS[selectedCountry] : null
+  const activeScope = selectedCity || selectedState || selectedCountry
 
   const { data: fetchedAgents } = useQuery({
     queryKey: ['agents'],
@@ -193,13 +240,14 @@ export function AgentConsolePage() {
 
   const handleRunAgent = (agentId: string) => {
     setRunningAgents((prev) => new Set(prev).add(agentId))
-    runMutation.mutate({ agentId, context: {} })
+    runMutation.mutate({ agentId, context: geoContext })
   }
 
   const handleChat = () => {
     if (!chatInput.trim()) return
+    const contextPrefix = selectedCountry ? `[Context: ${[selectedCountry, selectedState, selectedCity].filter(Boolean).join(' › ')}] ` : ''
     setChatHistory((prev) => [...prev, { role: 'user', content: chatInput }])
-    chatMutation.mutate({ message: chatInput, agentId: 'decision_agent' })
+    chatMutation.mutate({ message: contextPrefix + chatInput, agentId: 'decision_agent' })
     setChatInput('')
   }
 
@@ -227,6 +275,161 @@ export function AgentConsolePage() {
           </button>
         </div>
       </div>
+
+      {/* Geographic Context Selector */}
+      <GlassCard className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <MapPin className="w-4 h-4 text-blue-400" />
+          <h3 className="text-sm font-semibold text-white">Geographic Context</h3>
+          <span className="text-[10px] text-slate-500 ml-1">— agents will run with this scope</span>
+          {(selectedCountry || selectedState || selectedCity) && (
+            <button onClick={() => { setSelectedCountry(''); setSelectedState(''); setSelectedCity('') }}
+              className="ml-auto text-[10px] text-slate-500 hover:text-red-400 transition-colors">
+              Clear
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Country */}
+          <div>
+            <label className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">
+              <Globe className="w-3 h-3" /> Country
+            </label>
+            <select
+              value={selectedCountry}
+              onChange={e => { setSelectedCountry(e.target.value); setSelectedState(''); setSelectedCity('') }}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/50 transition-colors"
+            >
+              <option value="">All Countries (Global)</option>
+              {countries.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          {/* State */}
+          <div>
+            <label className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">
+              <Flag className="w-3 h-3" /> State / Province
+            </label>
+            <select
+              value={selectedState}
+              onChange={e => { setSelectedState(e.target.value); setSelectedCity('') }}
+              disabled={!selectedCountry}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-40 transition-colors"
+            >
+              <option value="">All States</option>
+              {states.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          {/* City */}
+          <div>
+            <label className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">
+              <Building2 className="w-3 h-3" /> City
+            </label>
+            <select
+              value={selectedCity}
+              onChange={e => setSelectedCity(e.target.value)}
+              disabled={!selectedState}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/50 disabled:opacity-40 transition-colors"
+            >
+              <option value="">All Cities</option>
+              {cities.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+        </div>
+        {/* Active context badge */}
+        {(selectedCountry || selectedState || selectedCity) && (
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/5">
+            <span className="text-[10px] text-slate-500">Active scope:</span>
+            {selectedCountry && <span className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">{selectedCountry}</span>}
+            {selectedState && <span className="text-[10px] text-slate-500">›</span>}
+            {selectedState && <span className="text-[10px] px-2 py-0.5 bg-cyan-500/10 text-cyan-400 rounded-full border border-cyan-500/20">{selectedState}</span>}
+            {selectedCity && <span className="text-[10px] text-slate-500">›</span>}
+            {selectedCity && <span className="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">{selectedCity}</span>}
+          </div>
+        )}
+      </GlassCard>
+
+      {/* Context-Specific Agentic Output */}
+      <AnimatePresence>
+        {activeScope && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <GlassCard className="p-5" glow="blue">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
+                    <Brain className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-white">AI Intelligence: {activeScope}</h3>
+                    <p className="text-[10px] text-slate-500">Real-time agent analysis for selected scope</p>
+                  </div>
+                </div>
+                {activeInsight && (
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-blue-400">{activeInsight.score}</p>
+                      <p className="text-[10px] text-slate-500">Water Score</p>
+                    </div>
+                    <span className={`text-[10px] px-2 py-1 rounded-full border font-medium ${activeInsight.risk === 'Critical' ? 'text-red-400 bg-red-500/10 border-red-500/20' : activeInsight.risk === 'High' ? 'text-orange-400 bg-orange-500/10 border-orange-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'}`}>
+                      {activeInsight.risk} Risk
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {activeInsight ? (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  {/* AI Insights */}
+                  <div className="lg:col-span-2 space-y-2">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Agent Insights</p>
+                    {activeInsight.insights.map((insight, i) => (
+                      <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
+                        className="flex items-start gap-2.5 p-2.5 bg-white/3 rounded-lg border border-white/5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0 animate-pulse" />
+                        <p className="text-xs text-slate-300">{insight}</p>
+                      </motion.div>
+                    ))}
+                    {activeInsight.alerts.length > 0 && (
+                      <div className="mt-2 space-y-1.5">
+                        <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Active Alerts</p>
+                        {activeInsight.alerts.map((alert, i) => (
+                          <div key={i} className="flex items-start gap-2 p-2 bg-red-500/5 rounded-lg border border-red-500/20">
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                            <p className="text-xs text-red-300">{alert}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {/* Participating Agents */}
+                  <div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Analyzing Agents</p>
+                    <div className="space-y-2">
+                      {activeInsight.agents.map((agent, i) => (
+                        <motion.div key={agent} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                          className="flex items-center gap-2 p-2.5 bg-white/3 rounded-lg border border-white/5">
+                          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                          <span className="text-xs text-white font-medium">{agent}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => activeInsight.agents.forEach(name => {
+                        const found = BUILTIN_AGENTS.find(a => a.name === name)
+                        if (found) handleRunAgent(found.agent_id)
+                      })}
+                      className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-xs text-blue-400 font-medium transition-colors"
+                    >
+                      <Play className="w-3 h-3" /> Run These Agents
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">No pre-loaded intelligence for "{activeScope}". Click Run All to generate analysis.</p>
+              )}
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agent Grid */}
