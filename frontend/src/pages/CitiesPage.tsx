@@ -40,11 +40,11 @@ export function CitiesPage() {
           const m: Record<string,string> = { 'in-': 'India', 'us-': 'USA', 'br-': 'Brazil', 'cn-': 'China', 'de-': 'Germany', 'fr-': 'France', 'jp-': 'Japan', 'au-': 'Australia' }
           return Object.entries(m).find(([k]) => sid?.startsWith(k))?.[1] ?? 'Unknown'
         }
-        return raw.map((c: Record<string, unknown>) => {
+        return raw.map((c: Record<string, unknown>): typeof mockCities[0] => {
           const score = (c.water_quality_score ?? c.water_score ?? 65) as number
           const status = score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : score >= 55 ? 'Warning' : 'Critical'
           return {
-            id: c.id, name: c.name,
+            id: String(c.id ?? ''), name: String(c.name ?? ''),
             country: countryFromState(String(c.state_id ?? '')),
             population: Math.round(((c.population as number ?? 5000000) / 1e6) * 10) / 10,
             water_score: score,

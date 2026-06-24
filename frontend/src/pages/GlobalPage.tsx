@@ -84,12 +84,12 @@ function WorldMapView() {
           <ZoomableGroup
             zoom={position.zoom}
             center={position.coordinates}
-            onMoveEnd={({ coordinates, zoom }) => setPosition({ coordinates, zoom })}
+            onMoveEnd={(pos: { coordinates: [number, number]; zoom: number }) => setPosition(pos)}
             maxZoom={6}
           >
             <Geographies geography={GEO_URL}>
-              {({ geographies }) =>
-                geographies.map(geo => {
+              {({ geographies }: { geographies: import('react-simple-maps').Geography[] }) =>
+                geographies.map((geo: import('react-simple-maps').Geography) => {
                   const data = COUNTRY_WATER[geo.id] ?? COUNTRY_WATER[String(Number(geo.id))]
                   const fill = data ? scoreToColor(data.score) : '#1e293b'
                   const stroke = data ? `${scoreToColor(data.score)}80` : '#334155'

@@ -47,7 +47,7 @@ export function SensorsPage() {
         const raw = r.data?.sensors ?? r.data
         if (!Array.isArray(raw) || !raw[0]) return mockSensors
         return raw.map((s: Record<string, unknown>) => ({
-          id: s.id, name: s.name,
+          id: String(s.id ?? ''), name: String(s.name ?? ''),
           location: String(s.city_id ?? s.location ?? 'Unknown'),
           type: String(s.type ?? 'flow').replace(/^./, (c: string) => c.toUpperCase()),
           status: s.status === 'online' ? 'Online' : s.status === 'offline' ? 'Offline' : s.status === 'flood' ? 'Alert' : 'Online',
