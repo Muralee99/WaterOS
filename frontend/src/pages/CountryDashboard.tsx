@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/ui/GlassCard'
 import { MetricCard } from '@/components/ui/MetricCard'
 import { countriesApi } from '@/services/api'
 import { Droplets, Activity, Bot, Zap } from 'lucide-react'
+import { AgentStatusPanel } from '@/components/AgentStatusPanel'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -217,14 +218,7 @@ export function CountryDashboard() {
         </GlassCard>
       </div>
 
-      <GlassCard className="p-4" glow="blue">
-        <div className="flex items-center gap-2 mb-2"><Brain className="w-4 h-4 text-blue-400" /><h3 className="text-sm font-semibold text-white">AI Insights</h3><span className="ml-auto text-xl font-bold text-blue-400">{d.ai_confidence}%</span></div>
-        <p className="text-xs text-slate-400 mb-2">Country-level analysis complete. AI agents detected early monsoon patterns with 92% accuracy. Reservoir optimization recommendations could improve water security by 18% over the next quarter.</p>
-        <div className="flex flex-wrap gap-1.5">
-          {['Country Agent', 'Reservoir Agent', 'Rainfall Agent'].map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">{a}</span>)}
-          {['forecastRain()', 'optimizeReservoir()', 'getHistoricalData()'].map(t => <span key={t} className="text-[10px] px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">{t}</span>)}
-        </div>
-      </GlassCard>
+      <AgentStatusPanel countryId={countryId ?? 'india'} countryName={d.name} />
     </div>
   )
 }
