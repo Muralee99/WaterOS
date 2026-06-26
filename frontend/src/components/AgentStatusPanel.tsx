@@ -322,7 +322,7 @@ const AGENTS_BY_COUNTRY: Record<string, AgentState[]> = {
         { label: 'Lake Mead Level', value: '38.0', unit: '%',  alert: true },
         { label: 'Shortage Tier',   value: 'Tier 2',           alert: true },
         { label: 'States Impacted', value: '3'                             },
-        { label: 'Drought Area',    value: '41',   unit: '%CA' alert: true },
+        { label: 'Drought Area',    value: '41',   unit: '%CA', alert: true },
         { label: 'Shasta Inflow',   value: '+20',  unit: 'm³/s'            },
       ],
       reasoningSteps: [
