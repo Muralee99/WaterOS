@@ -65,6 +65,226 @@ const BUILTIN_AGENTS = [
 
 const TIERS = ['All', 'Global', 'Country', 'State', 'City']
 
+// ──────────────── Rich Agent Result Display ────────────────
+
+function SeverityBadge({ label, severity }: { label: string; severity: string }) {
+  const colors: Record<string, string> = {
+    critical: 'text-red-400 bg-red-500/10 border-red-500/30',
+    high: 'text-orange-400 bg-orange-500/10 border-orange-500/30',
+    medium: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+    warning: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+    low: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+    safe: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+    good: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+    danger: 'text-red-400 bg-red-500/10 border-red-500/30',
+  }
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${colors[severity.toLowerCase()] ?? 'text-blue-400 bg-blue-500/10 border-blue-500/30'}`}>
+      {label}
+    </span>
+  )
+}
+
+function MetricMini({ label, value, unit = '' }: { label: string; value: string | number; unit?: string }) {
+  return (
+    <div className="bg-white/3 rounded-lg p-2 border border-white/5">
+      <p className="text-[9px] text-slate-500 uppercase tracking-wider leading-none">{label}</p>
+      <p className="text-sm font-bold text-white leading-tight mt-1">
+        {value}<span className="text-[10px] text-slate-400 font-normal ml-0.5">{unit}</span>
+      </p>
+    </div>
+  )
+}
+
+function AITextBlock({ text, label = 'AI Analysis' }: { text: string; label?: string }) {
+  if (!text || text.startsWith('[Simulated') || text.length < 20) return null
+  return (
+    <div className="bg-blue-500/5 border border-blue-500/15 rounded-lg p-2.5">
+      <p className="text-[9px] text-blue-400 font-semibold uppercase tracking-wider mb-1.5">{label}</p>
+      <p className="text-xs text-slate-300 leading-relaxed">{text.slice(0, 500)}{text.length > 500 ? '…' : ''}</p>
+    </div>
+  )
+}
+
+function AgentResultDisplay({ agentId, result }: { agentId: string; result: Record<string, unknown> }) {
+  const r = result
+
+  if (agentId === 'leak_detection_agent') {
+    const leaked = r.leak_detected as boolean
+    const sev = String(r.severity ?? 'low')
+    return (
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <SeverityBadge label={leaked ? '⚠ LEAK DETECTED' : '✓ PIPELINE HEALTHY'} severity={leaked ? sev : 'safe'} />
+          <span className="text-[10px] text-slate-500">probability {((r.leak_probability as number ?? 0) * 100).toFixed(0)}%</span>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <MetricMini label="Pressure Drop" value={(r.pressure_drop_bar as number ?? 0).toFixed(2)} unit="bar" />
+          <MetricMini label="Flow Loss" value={(r.flow_loss_pct as number ?? 0).toFixed(1)} unit="%" />
+          <MetricMini label="Leak Rate" value={(r.estimated_loss_l_s as number ?? 0).toFixed(1)} unit="L/s" />
+          <MetricMini label="Daily Loss" value={((r.estimated_daily_loss_m3 as number ?? 0)).toLocaleString()} unit="m³" />
+        </div>
+        {!!r.zone && <p className="text-[10px] text-amber-400 bg-amber-500/5 border border-amber-500/15 rounded px-2 py-1.5">📍 {String(r.zone)}</p>}
+        {!!r.economic_impact && <p className="text-[10px] text-slate-400">Economic impact: <span className="text-white">{String(r.economic_impact)}</span></p>}
+        <AITextBlock text={String(r.ai_analysis ?? '')} />
+        <div className="flex gap-2 flex-wrap">
+          {!!r.isolation_recommended && <span className="text-[10px] px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full">Isolation Required</span>}
+          {!!r.maintenance_required && <span className="text-[10px] px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">Maintenance Required</span>}
+        </div>
+      </div>
+    )
+  }
+
+  if (agentId === 'flood_agent') {
+    const risk = String(r.flood_risk ?? 'low')
+    const hours = r.hours_to_flood_crest as number | null
+    const rainfall = r.rainfall_analysis as Record<string, unknown> ?? {}
+    const districts = r.at_risk_districts as string[] ?? []
+    return (
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <SeverityBadge label={`FLOOD: ${risk.toUpperCase()}`} severity={risk} />
+          <span className="text-[10px] text-slate-500">score {((r.flood_risk_score as number ?? 0) * 100).toFixed(0)}%</span>
+        </div>
+        {!!r.river_name && <p className="text-[10px] text-blue-300">🌊 {String(r.river_name)} at {String(r.gauge_station ?? '')}</p>}
+        <div className="grid grid-cols-2 gap-1.5">
+          <MetricMini label="River Level" value={(r.river_level_m as number ?? 0).toFixed(2)} unit="m" />
+          <MetricMini label="Flood Threshold" value={(r.flood_threshold_m as number ?? 0).toFixed(1)} unit="m" />
+          <MetricMini label="Storm Prob." value={(rainfall.storm_probability_pct as number ?? 0).toFixed(0)} unit="%" />
+          <MetricMini label="7-day Rain" value={(rainfall.total_7day_mm as number ?? 0).toFixed(0)} unit="mm" />
+        </div>
+        {hours != null && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-2 flex items-center gap-2">
+            <span className="text-red-400 text-lg font-bold">{hours}h</span>
+            <span className="text-xs text-red-300">estimated to flood crest</span>
+          </div>
+        )}
+        {districts.length > 0 && (
+          <p className="text-[10px] text-slate-400">At risk: <span className="text-white">{districts.join(', ')}</span> ({String(r.estimated_affected_population ?? '')})</p>
+        )}
+        <AITextBlock text={String(r.ai_analysis ?? '')} />
+        <div className="flex gap-2 flex-wrap">
+          {!!r.emergency_action_required && <span className="text-[10px] px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full">Emergency Action</span>}
+          {!!r.evacuation_recommended && <span className="text-[10px] px-2 py-0.5 bg-red-500/15 text-red-300 border border-red-500/30 rounded-full font-semibold">Evacuation Recommended</span>}
+        </div>
+      </div>
+    )
+  }
+
+  if (agentId === 'water_quality_agent') {
+    const status = String(r.status ?? 'safe')
+    const score = r.safety_score as number ?? 0
+    const m = r.measurements as Record<string, unknown> ?? {}
+    const violations = r.violations as string[] ?? []
+    return (
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <SeverityBadge label={`WATER: ${status.toUpperCase()}`} severity={status === 'safe' ? 'safe' : status === 'warning' ? 'medium' : 'critical'} />
+          <div className="flex items-center gap-1.5">
+            <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, backgroundColor: score >= 80 ? '#10B981' : score >= 60 ? '#F59E0B' : '#EF4444' }} />
+            </div>
+            <span className="text-xs font-bold text-white">{score.toFixed(0)}%</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <MetricMini label="pH" value={(m.ph as number ?? 0).toFixed(2)} />
+          <MetricMini label="Turbidity" value={(m.turbidity_ntu as number ?? 0).toFixed(1)} unit="NTU" />
+          <MetricMini label="Chlorine" value={(m.chlorine_mg_l as number ?? 0).toFixed(2)} unit="mg/L" />
+          <MetricMini label="Dissolved O₂" value={(m.dissolved_oxygen_mg_l as number ?? 0).toFixed(1)} unit="mg/L" />
+        </div>
+        {violations.map((v, i) => <div key={i} className="text-[10px] text-red-400 flex items-center gap-1">⚠ {v}</div>)}
+        <AITextBlock text={String(r.ai_analysis ?? '')} />
+      </div>
+    )
+  }
+
+  if (agentId === 'reservoir_agent') {
+    const risk = String(r.overflow_risk ?? 'low')
+    const level = r.current_level_pct as number ?? 0
+    return (
+      <div className="space-y-2.5">
+        <SeverityBadge label={`OVERFLOW RISK: ${risk.toUpperCase()}`} severity={risk} />
+        <div className="relative pt-4">
+          <span className="absolute right-0 top-0 text-[10px] text-white font-bold">{level.toFixed(1)}%</span>
+          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <motion.div className="h-full rounded-full"
+              style={{ backgroundColor: level > 90 ? '#EF4444' : level > 75 ? '#F59E0B' : '#3B82F6' }}
+              initial={{ width: 0 }} animate={{ width: `${level}%` }} transition={{ duration: 0.8, ease: 'easeOut' }} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <MetricMini label="Inflow" value={(r.inflow_rate_m3s as number ?? 0).toFixed(1)} unit="m³/s" />
+          <MetricMini label="Outflow" value={(r.outflow_rate_m3s as number ?? 0).toFixed(1)} unit="m³/s" />
+          {r.days_to_full != null && <MetricMini label="Days to Full" value={(r.days_to_full as number).toFixed(1)} unit="d" />}
+          {r.days_to_empty != null && <MetricMini label="Days to Empty" value={(r.days_to_empty as number).toFixed(1)} unit="d" />}
+          <MetricMini label="Rec. Outflow" value={(r.recommended_outflow_m3s as number ?? 0).toFixed(1)} unit="m³/s" />
+        </div>
+        <AITextBlock text={String(r.ai_analysis ?? '')} />
+      </div>
+    )
+  }
+
+  if (agentId === 'climate_agent') {
+    const weather = r.real_time_weather as Record<string, unknown> | null
+    const cur = weather?.current as Record<string, unknown> | null
+    const fc = weather?.forecast_7day as Record<string, unknown> | null
+    const strategies = r.adaptation_strategies as string[] ?? []
+    return (
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-white">{String(r.region ?? 'Global')}</span>
+          {weather && <span className="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">Live Data</span>}
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <MetricMini label="Temp Anomaly" value={`+${(r.temperature_anomaly_c as number ?? 0).toFixed(2)}`} unit="°C" />
+          <MetricMini label="Drought Index" value={(r.drought_index as number ?? 0).toFixed(2)} />
+          <MetricMini label="Freshwater Δ" value={(r.freshwater_availability_change_pct as number ?? 0).toFixed(1)} unit="%" />
+          <MetricMini label="Flood Freq Δ" value={`+${(r.flood_frequency_change_pct as number ?? 0).toFixed(1)}`} unit="%" />
+        </div>
+        {cur && (
+          <div className="grid grid-cols-2 gap-1.5 border-t border-white/5 pt-2">
+            <p className="col-span-2 text-[9px] text-emerald-400 uppercase tracking-wider">Open-Meteo Real-time</p>
+            {cur.temperature_c != null && <MetricMini label="Current Temp" value={(cur.temperature_c as number).toFixed(1)} unit="°C" />}
+            {cur.humidity_pct != null && <MetricMini label="Humidity" value={(cur.humidity_pct as number).toFixed(0)} unit="%" />}
+            {fc?.total_precipitation_mm != null && <MetricMini label="7-day Precip" value={(fc.total_precipitation_mm as number).toFixed(1)} unit="mm" />}
+            {cur.wind_speed_kmh != null && <MetricMini label="Wind" value={(cur.wind_speed_kmh as number).toFixed(1)} unit="km/h" />}
+          </div>
+        )}
+        <AITextBlock text={String(r.ai_summary ?? '')} label="Climate AI Assessment" />
+        {strategies.length > 0 && (
+          <div className="space-y-1">
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider">Adaptation Strategies</p>
+            {strategies.map((s: string, i: number) => (
+              <div key={i} className="text-[10px] text-slate-400 flex items-start gap-1.5">
+                <span className="text-blue-400 shrink-0">→</span>{s}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Generic display for rainfall, decision, global coordinator, etc.
+  const numericPairs = Object.entries(r).filter(([, v]) => typeof v === 'number').slice(0, 6)
+  const aiText = String(r.ai_analysis || r.ai_summary || r.recommendation || r.final_recommendation || r.summary || '')
+  return (
+    <div className="space-y-2.5">
+      {numericPairs.length > 0 && (
+        <div className="grid grid-cols-2 gap-1.5">
+          {numericPairs.map(([key, val]) => (
+            <MetricMini key={key} label={key.replace(/_/g, ' ')} value={(val as number).toFixed(2)} />
+          ))}
+        </div>
+      )}
+      <AITextBlock text={aiText} />
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────
+
 function AgentCard({ agent, onRun, result, isRunning }: {
   agent: { agent_id: string; name: string; description: string; category: string }
   onRun: () => void
@@ -128,11 +348,9 @@ function AgentCard({ agent, onRun, result, isRunning }: {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden"
               >
-                <div className="mt-3 space-y-2">
-                  {/* Result preview */}
-                  <div className="bg-black/30 rounded-lg p-3 text-xs font-mono text-slate-300 overflow-x-auto max-h-40 overflow-y-auto">
-                    <pre>{JSON.stringify(result.result, null, 2)}</pre>
-                  </div>
+                <div className="mt-3 space-y-3">
+                  {/* Rich result display */}
+                  <AgentResultDisplay agentId={agent.agent_id} result={(result.result ?? {}) as Record<string, unknown>} />
                   {/* Reasoning chain */}
                   <div className="space-y-1.5">
                     <p className="text-xs text-slate-500 font-medium">Reasoning Chain:</p>
