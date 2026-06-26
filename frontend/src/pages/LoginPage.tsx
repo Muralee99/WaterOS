@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 
 export function LoginPage() {
   const [email, setEmail] = useState('admin@wateros.ai')
-  const [password, setPassword] = useState('wateros123')
+  const [password, setPassword] = useState('wateros2025!')
   const [showPassword, setShowPassword] = useState(false)
   const { login, isLoading } = useAuthStore()
   const navigate = useNavigate()
@@ -107,7 +107,7 @@ export function LoginPage() {
 
           <div className="mt-6 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
             <p className="text-xs text-blue-400 text-center">
-              Demo credentials: admin@wateros.ai / wateros123
+              Demo credentials: admin@wateros.ai / wateros2025!
             </p>
           </div>
         </div>
