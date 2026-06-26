@@ -85,7 +85,7 @@ async def query_river_flood(location: str) -> Optional[Dict]:
     row = await _one(
         """
         SELECT id, name, country, state, basin,
-               current_level_m, normal_level_m, flood_level_m,
+               current_level_m, flood_level_m, margin_m,
                discharge_m3s, flood_risk, last_updated
         FROM v_river_flood_status
         WHERE lower(name)    LIKE lower(:loc)
