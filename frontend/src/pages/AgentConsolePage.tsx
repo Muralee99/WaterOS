@@ -193,7 +193,9 @@ function AgentResultDisplay({ agentId, result }: { agentId: string; result: Reco
           <MetricMini label="Chlorine" value={(m.chlorine_mg_l as number ?? 0).toFixed(2)} unit="mg/L" />
           <MetricMini label="Dissolved O₂" value={(m.dissolved_oxygen_mg_l as number ?? 0).toFixed(1)} unit="mg/L" />
         </div>
+        {!!r.sampling_zone && <p className="text-[10px] text-slate-400 bg-white/3 rounded px-2 py-1">📍 {String(r.sampling_zone)}</p>}
         {violations.map((v, i) => <div key={i} className="text-[10px] text-red-400 flex items-center gap-1">⚠ {v}</div>)}
+        {!!r.population_at_risk && <p className="text-[10px] text-orange-400">At risk: {String(r.population_at_risk)}</p>}
         <AITextBlock text={String(r.ai_analysis ?? '')} />
       </div>
     )
@@ -204,7 +206,11 @@ function AgentResultDisplay({ agentId, result }: { agentId: string; result: Reco
     const level = r.current_level_pct as number ?? 0
     return (
       <div className="space-y-2.5">
-        <SeverityBadge label={`OVERFLOW RISK: ${risk.toUpperCase()}`} severity={risk} />
+        <div className="flex items-center gap-2 flex-wrap">
+          <SeverityBadge label={`OVERFLOW RISK: ${risk.toUpperCase()}`} severity={risk} />
+          {!!r.shortage_risk && r.shortage_risk !== 'low' && <SeverityBadge label={`SHORTAGE: ${String(r.shortage_risk).toUpperCase()}`} severity={String(r.shortage_risk)} />}
+        </div>
+        {!!r.reservoir_name && <p className="text-[10px] text-cyan-300">🏞 {String(r.reservoir_name)}</p>}
         <div className="relative pt-4">
           <span className="absolute right-0 top-0 text-[10px] text-white font-bold">{level.toFixed(1)}%</span>
           <div className="h-2 bg-white/5 rounded-full overflow-hidden">
