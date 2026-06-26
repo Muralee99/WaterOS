@@ -18,9 +18,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token')
-      window.location.href = '/login'
+    // Only clear auth for explicit token-validation endpoints, not every data 401.
+    // Hard redirecting on every 401 causes a reload loop when using demo tokens,
+    // because pages fall back to mock data and Zustand persist keeps isAuthenticated=true.
+    const url: string = error.config?.url ?? ''
+    if (error.response?.status === 401 && (url.includes('/auth/me') || url.includes('/auth/refresh'))) {
+      const { useAuthStore } = await import('@/store/authStore')
+      useAuthStore.getState().logout()
     }
     return Promise.reject(error)
   }
