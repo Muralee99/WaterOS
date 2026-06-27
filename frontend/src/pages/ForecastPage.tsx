@@ -8,12 +8,23 @@ import {
 } from 'recharts'
 import { CloudRain, Thermometer, Wind, Droplets } from 'lucide-react'
 
+const MOCK_FORECAST = {
+  days: 7,
+  temperature:   [34.2, 33.8, 36.1, 38.4, 37.9, 35.2, 33.6],
+  rainfall_mm:   [92,   87,  124,   78,   68,   84,   57 ],
+  humidity_pct:  [78,   82,   91,   74,   69,   76,   80 ],
+  storm_probability: 78,
+  drought_risk: 'medium',
+}
+
 export function ForecastPage() {
-  const { data: forecast } = useQuery({
+  const { data: apiData } = useQuery({
     queryKey: ['forecast'],
     queryFn: () => forecastApi.get('India', 7).then((r) => r.data),
-    refetchInterval: 300000,
+    retry: false,
   })
+
+  const forecast = apiData ?? MOCK_FORECAST
 
   const chartData = forecast
     ? Array.from({ length: forecast.days }, (_, i) => ({

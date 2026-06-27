@@ -419,6 +419,405 @@ const WORKFLOWS: Record<string, StateWorkflow> = {
       ],
     },
   },
+
+  maharashtra: {
+    agents: [
+      { id: 'sensor', name: 'Sensor Agent', stage: 'collection', status: 'completed', statusLabel: 'DATA READY', summary: '4,200 sensors — reservoir near overflow, 284 pipeline leak zones', confidence: 94, elapsed: '1.4s',
+        dataSources: [
+          { name: 'Tansa–Vaitarna Level Sensor', type: 'sensor', freshness: '2 min ago', quality: 98, detail: '91.1% fill — overflow risk HIGH within 48h' },
+          { name: 'Mumbai Pipeline Pressure Network (284 zones)', type: 'sensor', freshness: '5 min ago', quality: 91, detail: '3 trunk main anomalies — Dharavi sector 4.1→2.8 bar drop' },
+          { name: 'WQI Sensors — Bhandup WTP', type: 'sensor', freshness: '3 min ago', quality: 96, detail: 'pH 7.4, turbidity 1.8 NTU — within WHO limits' },
+          { name: 'IMD Maharashtra Weather (280 stations)', type: 'sensor', freshness: '30 min ago', quality: 93, detail: '245mm 5-day accumulation — heavy rain active' },
+        ],
+        rules: [
+          { condition: 'Reservoir fill > 90%', trigger: '91.1%', action: 'Overflow alert — notify BMC, increase outflow rate', priority: 'high' },
+          { condition: 'Pressure drop > 1 bar in trunk main', trigger: '1.3 bar drop in Dharavi', action: 'ALERT: suspect trunk main fracture — dispatch repair crew', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Poll Tansa–Vaitarna reservoir sensor', finding: '91.1% fill. Inflow 24 m³/s, outflow 18 m³/s. Net: +6 m³/s — rising', alert: true },
+          { n: 2, action: 'Scan 284 pipeline pressure zones', finding: '3 critical drops: Dharavi -1.3bar, Sion -0.9bar, Kurla -1.1bar — trunk fracture risk HIGH', alert: true },
+          { n: 3, action: 'Sample WTP water quality readings', finding: 'pH 7.4, turbidity 1.8 NTU — SAFE. 3,800 MLD treatment capacity at 97%' },
+          { n: 4, action: 'Process weather station array', finding: '245mm 5-day total. 78% storm probability. Reservoir rising expected to continue 72h' },
+        ],
+        metrics: [
+          { name: 'Reservoir Fill', value: '91.1%', threshold: '< 85%', ok: false },
+          { name: 'Leak Zones', value: '284', threshold: '< 50', ok: false },
+          { name: 'WQI Score', value: '92', threshold: '> 80', ok: true },
+          { name: 'Pipeline Uptime', value: '98.1%', threshold: '> 95%', ok: true },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Reservoir 91.1% — overflow risk. 3 trunk main fractures losing 680 MLD daily.',
+        dispatches: [
+          { target: 'Infrastructure Agent', targetType: 'agent', urgency: 'critical', message: 'Trunk fractures: Dharavi (-1.3bar), Sion (-0.9bar), Kurla (-1.1bar) — dispatch repair teams', channel: 'agent-bus' },
+          { target: 'Climate Agent', targetType: 'agent', urgency: 'high', message: 'Reservoir 91.1%, storm_prob=78%, 5d_rainfall=245mm — overflow risk assessment needed', channel: 'agent-bus' },
+        ],
+      },
+      { id: 'infrastructure', name: 'Infrastructure Agent', stage: 'analysis', status: 'alert', statusLabel: 'LEAKS DETECTED', summary: '284 leak zones — 3 critical trunk fractures, 680 MLD daily water loss', confidence: 88, elapsed: '2.8s',
+        dataSources: [
+          { name: 'Sensor Agent — pressure network data', type: 'api', freshness: '0 sec', quality: 94, detail: '284 pressure anomalies — 3 critical zones' },
+          { name: 'MCGM pipe asset database', type: 'db', freshness: '6 months ago', quality: 82, detail: 'Average pipe age: 32 years. Material: CI/DI mix. 1,840km network' },
+          { name: 'Acoustic leak correlation sensors', type: 'sensor', freshness: '10 min ago', quality: 88, detail: '3 confirmed acoustic signatures in Dharavi sector' },
+        ],
+        rules: [
+          { condition: 'Pressure drop > 1 bar AND acoustic confirmation', trigger: 'Dharavi: -1.3bar + 3 acoustic matches', action: 'CRITICAL: Dispatch repair crew + isolate segment if pressure < 1.5 bar', priority: 'critical' },
+          { condition: 'Daily loss > 500 MLD', trigger: '680 MLD estimated loss', action: 'Escalate to BMC Water Dept — financial + environmental emergency', priority: 'high' },
+        ],
+        steps: [
+          { n: 1, action: 'Localize leak zones from pressure differential analysis', finding: '3 critical: Dharavi 6.2L/s, Sion 4.8L/s, Kurla 5.1L/s — total 16.1L/s = 1,391 m³/h', alert: true },
+          { n: 2, action: 'Cross-validate with acoustic sensor signatures', finding: 'Dharavi confirmed at 3 sensors. Sion 2 sensors. Kurla 1 sensor (possible)' },
+          { n: 3, action: 'Estimate daily water loss and economic impact', finding: '680 MLD lost daily = ₹18 crore/day at Mumbai water tariff' },
+          { n: 4, action: 'Check repair crew availability and dispatch', finding: '2 emergency crews available. ETA: Dharavi 45 min, Sion 90 min' },
+        ],
+        metrics: [
+          { name: 'Critical Leaks', value: '3', threshold: '0', ok: false },
+          { name: 'Daily Loss', value: '680 MLD', threshold: '< 100 MLD', ok: false },
+          { name: 'Financial Loss', value: '₹18Cr/day', threshold: '—', ok: false },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: '3 trunk main fractures losing 680 MLD daily. ₹18 crore economic loss per day.',
+        dispatches: [
+          { target: 'BMC Water Department', targetType: 'dept', urgency: 'critical', message: 'CRITICAL: 3 trunk main fractures. Dharavi (16.1L/s), Sion, Kurla. Dispatching 2 crews. Estimated 680 MLD daily loss.', channel: 'Emergency Portal + Phone' },
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'high', message: 'leaks_count=3, daily_loss=680MLD, zones=[Dharavi,Sion,Kurla], crews_dispatched=2', channel: 'agent-bus' },
+        ],
+      },
+      { id: 'reservoir', name: 'Reservoir Agent', stage: 'analysis', status: 'alert', statusLabel: 'OVERFLOW RISK', summary: 'Tansa–Vaitarna 91.1% — controlled release required within 24h', confidence: 92, elapsed: '1.9s',
+        dataSources: [
+          { name: 'Sensor Agent — Tansa fill level', type: 'api', freshness: '0 sec', quality: 98, detail: '91.1% fill, inflow 24 m³/s, outflow 18 m³/s' },
+          { name: 'Historical spillway records', type: 'db', freshness: 'static', quality: 95, detail: 'Maximum safe level 93% — last spillway event 2019' },
+        ],
+        rules: [
+          { condition: 'Reservoir fill > 90% AND inflow > outflow', trigger: '91.1% + net +6m³/s', action: 'Controlled release — increase outflow to 36 m³/s to hold at 90%', priority: 'high' },
+          { condition: 'Fill > 95%', trigger: 'Projected in 8h at current rate', action: 'Emergency spillway activation — alert downstream MCGM zones', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Calculate time to 95% overflow threshold', finding: 'Net fill rate +6 m³/s. At 153 MCM capacity, 4% = 6.12 MCM. Time to overflow: ~12 hours', alert: true },
+          { n: 2, action: 'Compute safe controlled release rate', finding: 'Recommend outflow 36 m³/s (2× current) to stop rise and stabilise at 89–90%' },
+          { n: 3, action: 'Assess downstream capacity for release', finding: 'Ulhas River can absorb 40 m³/s without flooding. Release safe at 36 m³/s' },
+        ],
+        metrics: [
+          { name: 'Fill Level', value: '91.1%', threshold: '< 85%', ok: false },
+          { name: 'Time to Overflow', value: '~12h', threshold: 'N/A', ok: false },
+          { name: 'Recommended Outflow', value: '36 m³/s', threshold: '—', ok: true },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Reservoir overflow in ~12 hours at current fill rate. Controlled release to 36 m³/s required immediately.',
+        dispatches: [
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'high', message: 'reservoir=91.1%, overflow_eta=12h, safe_release=36m3s, downstream_safe=yes', channel: 'agent-bus' },
+          { target: 'BMC Operations', targetType: 'dept', urgency: 'high', message: 'IMMEDIATE: Increase Tansa outflow to 36 m³/s. Current 18 m³/s causing overflow risk in 12 hours.', channel: 'Control Room' },
+        ],
+      },
+      { id: 'decision', name: 'Decision Agent', stage: 'decision', status: 'alert', statusLabel: 'ACTION REQUIRED', summary: 'DUAL CRISIS: reservoir overflow + trunk leaks — coordinated response', confidence: 91, elapsed: '1.6s',
+        dataSources: [
+          { name: 'Sensor Agent', type: 'api', freshness: '0 sec', quality: 94, detail: 'Reservoir 91.1%, 3 leak zones, WQI 92' },
+          { name: 'Infrastructure Agent', type: 'api', freshness: '0 sec', quality: 88, detail: '680 MLD loss, 3 trunk fractures' },
+          { name: 'Reservoir Agent', type: 'api', freshness: '0 sec', quality: 92, detail: 'Overflow 12h, release 36 m³/s' },
+        ],
+        rules: [
+          { condition: 'Simultaneous overflow + leak crisis', trigger: 'Both HIGH severity agents', action: 'Dual-track response: reservoir release + leak repair simultaneously', priority: 'high' },
+        ],
+        steps: [
+          { n: 1, action: 'Synthesise reservoir and infrastructure inputs', finding: 'Two parallel HIGH crises — overflow and trunk fractures. Independent response tracks possible' },
+          { n: 2, action: 'Check if leak repair affects water supply during reservoir release', finding: 'Segment isolation needed for Dharavi repair — 40,000 residents on 6h supply disruption' },
+          { n: 3, action: 'Generate coordinated action plan', finding: 'Track A: reservoir release 36 m³/s NOW. Track B: Dharavi repair with 6h advance notice to residents' },
+        ],
+        metrics: [
+          { name: 'Crisis Count', value: '2 concurrent', threshold: '0', ok: false },
+          { name: 'Response Tracks', value: '2 parallel', threshold: '—', ok: true },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Dual crisis: reservoir overflow + pipeline fractures. Parallel response activated.',
+        dispatches: [
+          { target: 'BMC Water Department', targetType: 'dept', urgency: 'high', message: 'Track A: Increase Tansa outflow to 36 m³/s immediately. Track B: Isolate Dharavi trunk main — notify 40K residents of 6h supply disruption.', channel: 'Emergency Portal + Control Room' },
+          { target: 'Citizens (Dharavi area)', targetType: 'public', urgency: 'medium', message: 'Water supply disruption for 6 hours from 2 PM for emergency pipeline repair. Store water. Supply restored by 8 PM.', channel: 'SMS + MCGM App' },
+          { target: 'Irrigation / MCGM Repair Teams', targetType: 'emergency', urgency: 'critical', message: 'DISPATCH NOW: 2 crews to Dharavi trunk main fracture. GPS coordinates transmitted. Estimated repair 4–6 hours.', channel: 'Field Operations Radio' },
+        ],
+      },
+    ],
+    verdict: {
+      severity: 'high', title: 'DUAL CRISIS — Maharashtra / Mumbai',
+      summary: 'Tansa–Vaitarna reservoir at 91.1% — overflow in 12 hours without intervention. Simultaneously, 3 trunk main fractures in Mumbai losing 680 MLD daily (₹18 crore/day). Parallel response tracks activated.',
+      agentsInput: ['Sensor Agent', 'Infrastructure Agent', 'Reservoir Agent'],
+      precautions: [
+        'IMMEDIATE: Increase Tansa reservoir outflow to 36 m³/s — stabilise at 89%',
+        'Dispatch 2 emergency repair crews to Dharavi, Sion, Kurla trunk fractures',
+        'Notify 40,000 Dharavi residents of 6-hour planned supply disruption',
+        'Citizens: store water — emergency repair disruption 2 PM to 8 PM',
+        'BMC: activate Stage 1 water conservation advisory — demand-side reduction 15%',
+      ],
+      dispatches: [
+        { target: 'BMC Water Operations', icon: 'building', urgency: 'HIGH', message: 'Increase Tansa outflow 18→36 m³/s. Overflow in 12h if unchanged.' },
+        { target: 'MCGM Repair Crews', icon: 'emergency', urgency: 'CRITICAL', message: 'Deploy to 3 trunk fractures: Dharavi, Sion, Kurla. Estimated 680 MLD daily loss.' },
+        { target: 'Dharavi Residents (40K)', icon: 'public', urgency: 'MEDIUM', message: 'Supply disruption 2 PM–8 PM for emergency pipe repair. Store water.' },
+        { target: 'Maharashtra Farmers', icon: 'farmer', urgency: 'LOW', message: 'Heavy rainfall expected 72h. Avoid field irrigation — rain will be sufficient. Protect low-lying crops.' },
+      ],
+    },
+  },
+
+  odisha: {
+    agents: [
+      { id: 'sensor', name: 'Sensor Agent', stage: 'collection', status: 'completed', statusLabel: 'DATA READY', summary: '1,600 sensors — Hirakud at 91.2%, 8 river gauges above warning level', confidence: 96, elapsed: '1.1s',
+        dataSources: [
+          { name: 'Hirakud Reservoir Level (OWS)', type: 'sensor', freshness: '1 min ago', quality: 99, detail: 'Fill 91.2% (7,420 MCM / 8,136 MCM). Inflow 480 m³/s, outflow 320 m³/s' },
+          { name: 'Mahanadi River Gauge Network (8 stations)', type: 'sensor', freshness: '5 min ago', quality: 95, detail: 'Cuttack station: 6.8m vs 6.2m warning level' },
+          { name: 'IMD Odisha Weather Network (190 stations)', type: 'sensor', freshness: '30 min ago', quality: 91, detail: '185mm 3-day accumulation — monsoon trough active' },
+        ],
+        rules: [
+          { condition: 'Reservoir fill > 90% AND inflow > outflow', trigger: '91.2%, net +160 m³/s', action: 'OVERFLOW ALERT — escalate to ReservoirAgent and DecisionAgent', priority: 'high' },
+          { condition: 'River gauge > warning level', trigger: 'Cuttack 6.8m > 6.2m', action: 'Issue downstream flood watch — alert coastal districts', priority: 'high' },
+        ],
+        steps: [
+          { n: 1, action: 'Query Hirakud reservoir level — OWS telemetry', finding: '91.2% fill. Net inflow +160 m³/s. Time to full: ~6 hours at current rate', alert: true },
+          { n: 2, action: 'Poll 8 Mahanadi river gauge stations', finding: 'Cuttack: 6.8m (warning 6.2m). Naraj: 7.1m. All 8 stations above seasonal average' },
+          { n: 3, action: 'Aggregate IMD weather data', finding: '185mm 3-day total. Heavy rainfall belt active over Chhattisgarh catchment → increasing inflow' },
+        ],
+        metrics: [
+          { name: 'Hirakud Fill', value: '91.2%', threshold: '< 85%', ok: false },
+          { name: 'Cuttack Level', value: '6.8m', threshold: '< 6.2m', ok: false },
+          { name: '3-Day Rainfall', value: '185mm', threshold: '< 100mm', ok: false },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Hirakud 91.2% — full in 6h. Mahanadi above warning at Cuttack and Naraj.',
+        dispatches: [
+          { target: 'Reservoir Agent', targetType: 'agent', urgency: 'high', message: 'hirakud=91.2%, inflow=480m3s, outflow=320m3s, time_to_full=6h', channel: 'agent-bus' },
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'high', message: 'flood_watch: cuttack=6.8m, naraj=7.1m, rainfall_3d=185mm, catchment_active=true', channel: 'agent-bus' },
+        ],
+      },
+      { id: 'reservoir', name: 'Reservoir Agent', stage: 'analysis', status: 'alert', statusLabel: 'CONTROLLED RELEASE', summary: 'Emergency controlled release 320→580 m³/s — downstream alert required', confidence: 93, elapsed: '2.2s',
+        dataSources: [
+          { name: 'Sensor Agent — Hirakud fill data', type: 'api', freshness: '0 sec', quality: 96, detail: '91.2%, time_to_full 6h' },
+          { name: 'Hirakud Dam Operation Manual', type: 'db', freshness: 'static', quality: 100, detail: 'Gate operation protocol: max 580 m³/s, open 4 spillways sequentially' },
+          { name: 'HEC-RAS downstream flood routing model', type: 'model', freshness: 'static', quality: 88, detail: '580 m³/s release — Cuttack +0.6m rise in 4 hours' },
+        ],
+        rules: [
+          { condition: 'Fill > 90% AND time_to_full < 8h', trigger: '91.2%, 6h to full', action: 'Emergency controlled release — increase outflow to 580 m³/s, open 4 spillways', priority: 'critical' },
+          { condition: 'Downstream level > danger level', trigger: 'Cuttack approaching 7.5m danger', action: 'Alert: downstream communities — release will add 0.6m to current level', priority: 'high' },
+        ],
+        steps: [
+          { n: 1, action: 'Assess spillway capacity and gate configuration', finding: '4 spillway gates available. Max combined release: 580 m³/s. Current: 320 m³/s' },
+          { n: 2, action: 'Model downstream impact of 580 m³/s release', finding: 'Cuttack: 6.8 + 0.6 = 7.4m — below 7.5m danger level. Acceptable.', alert: true },
+          { n: 3, action: 'Recommend controlled release protocol', finding: 'Open gates sequentially over 2 hours: 320→400→480→580 m³/s. Alert issued 4h before' },
+        ],
+        metrics: [
+          { name: 'Current Outflow', value: '320 m³/s', threshold: '—', ok: true },
+          { name: 'Required Outflow', value: '580 m³/s', threshold: '—', ok: false },
+          { name: 'Cuttack Impact', value: '+0.6m', threshold: '< 0.7m danger', ok: true },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Controlled release 320→580 m³/s recommended. Cuttack will reach 7.4m — below 7.5m danger level.',
+        dispatches: [
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'high', message: 'release_plan: 320→580m3s over 2h, cuttack_impact=+0.6m, max_level=7.4m, below_danger=true', channel: 'agent-bus' },
+          { target: 'Irrigation Dept (Odisha)', targetType: 'dept', urgency: 'high', message: 'OPEN SPILLWAYS: Hirakud controlled release 580 m³/s from 14:00 IST. Open gates G1→G4 over 2 hours.', channel: 'Dam Control Room' },
+        ],
+      },
+      { id: 'decision', name: 'Decision Agent', stage: 'decision', status: 'alert', statusLabel: 'RELEASE APPROVED', summary: 'Controlled release approved — downstream alert issued to 3 coastal districts', confidence: 94, elapsed: '1.4s',
+        dataSources: [
+          { name: 'Sensor Agent', type: 'api', freshness: '0 sec', quality: 96, detail: 'Hirakud 91.2%, Cuttack 6.8m' },
+          { name: 'Reservoir Agent', type: 'api', freshness: '0 sec', quality: 93, detail: '580 m³/s release, 7.4m Cuttack peak' },
+        ],
+        rules: [
+          { condition: 'Controlled release does not exceed danger level downstream', trigger: '7.4m < 7.5m danger', action: 'APPROVE release — issue downstream alert and evacuation advisory for low-lying areas', priority: 'high' },
+        ],
+        steps: [
+          { n: 1, action: 'Verify downstream impact within safe limits', finding: 'Cuttack peak 7.4m < 7.5m danger level — release approved with advisory' },
+          { n: 2, action: 'Identify low-lying villages at risk', finding: '18 villages within 2km of Mahanadi floodplain, 8,400 residents — evacuation advisory' },
+          { n: 3, action: 'Issue multi-channel alert', finding: 'Alert dispatched to Cuttack, Puri, Khordha DMs and Emergency Services' },
+        ],
+        metrics: [
+          { name: 'Release Decision', value: 'APPROVED', threshold: '—', ok: true },
+          { name: 'Villages at Risk', value: '18', threshold: '0', ok: false },
+          { name: 'Residents Advisory', value: '8,400', threshold: '—', ok: false },
+        ],
+        issueFound: true, severity: 'high', issueSummary: 'Controlled release approved. 18 villages (8,400 residents) on evacuation advisory for low-lying areas.',
+        dispatches: [
+          { target: 'Irrigation Dept', targetType: 'dept', urgency: 'high', message: 'PROCEED with controlled Hirakud release 580 m³/s starting 14:00 IST. Open G1→G4 over 2 hours.', channel: 'Dam Control Room' },
+          { target: 'Emergency Services (ODRAF)', targetType: 'emergency', urgency: 'high', message: 'Pre-position ODRAF rescue teams at Cuttack, Puri, Khordha. River will rise to 7.4m by ~18:00 IST.', channel: 'ODRAF Command' },
+          { target: '18 Riverbank Villages', targetType: 'public', urgency: 'high', message: 'RIVER RISING: Mahanadi will rise to 7.4m by 6 PM due to Hirakud controlled release. Move to higher ground now.', channel: 'SMS + Village PA System' },
+          { target: 'Fishermen (Mahanadi Delta)', targetType: 'fisherman', urgency: 'high', message: 'Dam release in progress — avoid river and coastal areas until 10 PM. Strong currents expected.', channel: 'Fisheries Dept + Radio' },
+        ],
+      },
+    ],
+    verdict: {
+      severity: 'high', title: 'CONTROLLED RELEASE — Hirakud / Odisha',
+      summary: 'Hirakud reservoir at 91.2% — overflow in 6 hours without intervention. Controlled release of 580 m³/s approved after confirming Cuttack downstream peak (7.4m) remains below 7.5m danger level. 18 villages on evacuation advisory.',
+      agentsInput: ['Sensor Agent', 'Reservoir Agent'],
+      precautions: [
+        'Hirakud: controlled release 320→580 m³/s, gates G1–G4, starting 14:00 IST',
+        '18 Mahanadi floodplain villages — move to high ground by 15:00 IST',
+        'ODRAF: pre-position rescue teams at Cuttack, Puri, Khordha',
+        'Fishermen: no river or coastal activity 14:00–22:00 IST',
+        'Monitor Cuttack gauge every 30 minutes — halt release if approaching 7.4m',
+      ],
+      dispatches: [
+        { target: 'Irrigation Dept', icon: 'building', urgency: 'HIGH', message: 'Open Hirakud gates G1–G4 to achieve 580 m³/s outflow by 16:00 IST.' },
+        { target: 'ODRAF / Emergency', icon: 'emergency', urgency: 'HIGH', message: 'Pre-position rescue teams at 3 districts. River rising to 7.4m by 18:00 IST.' },
+        { target: '18 Villages (8,400 people)', icon: 'public', urgency: 'HIGH', message: 'Evacuate low-lying areas now — Mahanadi rising due to dam release, peak 7.4m at 18:00 IST.' },
+        { target: 'Fishermen (Delta)', icon: 'fisherman', urgency: 'HIGH', message: 'No river activity 14:00–22:00. Strong currents from controlled dam release.' },
+      ],
+    },
+  },
+
+  'west-bengal': {
+    agents: [
+      { id: 'satellite', name: 'Satellite Agent', stage: 'collection', status: 'alert', statusLabel: 'CYCLONE TRACKED', summary: 'Deep depression tracking NW — 72h landfall probability 68% near Digha', confidence: 91, elapsed: '4.2s',
+        dataSources: [
+          { name: 'INSAT-3DR Thermal/Visible (ISRO)', type: 'satellite', freshness: '45 min ago', quality: 96, detail: 'Deep depression 14.8°N 88.4°E, MSLP 989 hPa, moving NW at 16 km/h' },
+          { name: 'NOAA GOES-18 Wind Shear Analysis', type: 'satellite', freshness: '1 hr ago', quality: 88, detail: 'Low wind shear 5–8 m/s — favourable for intensification' },
+          { name: 'Sentinel-1 SAR Ocean Surface', type: 'satellite', freshness: '6 hr ago', quality: 84, detail: 'Wave heights 2.8–3.4m in deep Bay of Bengal sector' },
+        ],
+        rules: [
+          { condition: 'Landfall probability > 60% AND system within 500km', trigger: '68% landfall, 320km from Digha', action: 'CYCLONE WARNING — escalate to ClimateAgent and DecisionAgent. Fishermen ban immediate.', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Track INSAT-3DR deep depression position and movement', finding: '14.8°N 88.4°E, speed 16 km/h NW. ETA Digha coast: 56–62 hours', alert: true },
+          { n: 2, action: 'Analyse wind shear environment for intensification', finding: 'Low shear 5–8 m/s + SST 29.8°C — likely intensification to cyclonic storm in 24h' },
+          { n: 3, action: 'Compute landfall probability distribution', finding: '68% landfall near Digha–Sagar Island corridor. 22% Odisha border. 10% dissipation' },
+          { n: 4, action: 'Estimate surge height at Digha coast', finding: 'Expected storm surge 1.2–1.8m above high tide — inundation 2–4km inland' },
+        ],
+        metrics: [
+          { name: 'Landfall Probability', value: '68%', threshold: '< 30%', ok: false },
+          { name: 'ETA to Coast', value: '56–62h', threshold: 'N/A', ok: false },
+          { name: 'Wind Shear', value: '5–8 m/s', threshold: '> 15 m/s', ok: false },
+          { name: 'Surge Height', value: '1.2–1.8m', threshold: '< 0.5m', ok: false },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: 'Deep depression → cyclone intensification likely. 68% landfall near Digha in 56–62 hours. Storm surge 1.2–1.8m.',
+        dispatches: [
+          { target: 'Climate Agent', targetType: 'agent', urgency: 'critical', message: 'cyclone_track: 14.8N 88.4E, landfall_prob=68%, eta_hours=58, surge_m=1.5, intensification=likely', channel: 'agent-bus' },
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'critical', message: 'CYCLONE WARNING: WB coast 56-62h. Surge 1.2-1.8m. Fishermen ban immediate.', channel: 'agent-bus' },
+        ],
+      },
+      { id: 'climate', name: 'Climate Agent', stage: 'analysis', status: 'alert', statusLabel: 'STORM CRITICAL', summary: 'Cyclone intensification confirmed — 120km/h winds expected at landfall', confidence: 87, elapsed: '3.1s',
+        dataSources: [
+          { name: 'Satellite Agent — cyclone track', type: 'api', freshness: '0 sec', quality: 91, detail: '14.8°N 88.4°E, 68% landfall, ETA 58h' },
+          { name: 'ECMWF ensemble forecast (51 members)', type: 'model', freshness: '6 hr ago', quality: 89, detail: '43/51 members agree on West Bengal landfall. Peak winds 100–130 km/h' },
+          { name: 'IMD Cyclone warning bulletin', type: 'api', freshness: '2 hr ago', quality: 95, detail: 'Yellow alert upgraded to Orange. 3-day accumulated rain forecast 340mm' },
+        ],
+        rules: [
+          { condition: 'Landfall probability > 60% AND ECMWF ensemble agreement > 80%', trigger: '68% AND 43/51 members', action: 'CYCLONE EMERGENCY — coastal evacuation advisory. Mass alert all departments.', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Synthesise satellite track with ECMWF ensemble', finding: 'Consensus: landfall 68–72h near Digha at 100–130 km/h sustained winds' },
+          { n: 2, action: 'Compute 3-day rainfall forecast for landfall zone', finding: '340mm expected in 72h over coastal West Bengal — severe flooding inland' },
+          { n: 3, action: 'Assess infrastructure vulnerability (low-lying coastal areas)', finding: '180,000 residents within 5km of coast in Purba Medinipur — evacuation required' },
+        ],
+        metrics: [
+          { name: 'Peak Winds', value: '120 km/h', threshold: '< 60 km/h', ok: false },
+          { name: '3-Day Rain', value: '340mm', threshold: '< 100mm', ok: false },
+          { name: 'Coastal Residents', value: '180K at risk', threshold: '—', ok: false },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: 'Cyclone landfall confirmed 68h. 120 km/h winds. 340mm rain. 180K coastal residents at risk.',
+        dispatches: [
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'critical', message: 'CYCLONE EMERGENCY: landfall_72h, winds=120kmh, rain_3d=340mm, coast_pop=180K, surge=1.5m', channel: 'agent-bus' },
+          { target: 'Fishermen (Bay of Bengal)', targetType: 'fisherman', urgency: 'critical', message: 'CYCLONE WARNING — RETURN TO PORT IMMEDIATELY. All vessels within 500km of coast must dock. System will be cyclonic storm within 24 hours.', channel: 'Coast Guard VHF Ch 16 + SMS' },
+        ],
+      },
+      { id: 'decision', name: 'Decision Agent', stage: 'decision', status: 'alert', statusLabel: 'CYCLONE EMERGENCY', summary: 'CYCLONE EMERGENCY declared — 180K coastal evacuation, NDRF deployment', confidence: 93, elapsed: '1.8s',
+        dataSources: [
+          { name: 'Satellite Agent', type: 'api', freshness: '0 sec', quality: 91, detail: '68% landfall, 1.5m surge' },
+          { name: 'Climate Agent', type: 'api', freshness: '0 sec', quality: 87, detail: '120 km/h winds, 340mm rain, 180K at risk' },
+        ],
+        rules: [
+          { condition: 'Cyclone landfall > 60% AND winds > 100 km/h', trigger: '68% AND 120 km/h', action: 'DECLARE CYCLONE EMERGENCY — mandatory coastal evacuation, NDRF full deployment', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Synthesise cyclone intelligence from 2 agents', finding: 'CYCLONE EMERGENCY — 68% landfall, 120 km/h, 180K at risk. Full emergency activation' },
+          { n: 2, action: 'Compute evacuation scope and timeline', finding: '180,000 residents — 35 evacuation centres, 48h pre-landfall window available' },
+          { n: 3, action: 'Deploy response assets', finding: 'NDRF 8 teams, SDRF 12 teams, 240 boats, 18 helipads activated' },
+        ],
+        metrics: [
+          { name: 'Emergency Level', value: 'CYCLONE', threshold: '—', ok: false },
+          { name: 'Evacuation Target', value: '180,000', threshold: '—', ok: false },
+          { name: 'Evacuation Window', value: '48 hours', threshold: '> 24h', ok: true },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: 'CYCLONE EMERGENCY — 180K mandatory evacuation, 120 km/h winds, 340mm rain, 1.5m storm surge.',
+        dispatches: [
+          { target: 'WB State Government', targetType: 'dept', urgency: 'critical', message: 'DECLARE CYCLONE EMERGENCY. Mandatory evacuation Purba Medinipur coastal belt — 180,000 residents. Open 35 cyclone shelters.', channel: 'CM Office + Cabinet' },
+          { target: 'NDRF / SDRF', targetType: 'emergency', urgency: 'critical', message: 'Deploy 8 NDRF + 12 SDRF teams immediately. Pre-position at Digha, Contai, Haldia. 240 rescue boats + 18 helipads.', channel: 'NDRF Command Portal' },
+          { target: 'Coastal Citizens (180K)', targetType: 'public', urgency: 'critical', message: 'CYCLONE WARNING: Move to nearest shelter IMMEDIATELY. System making landfall in 48–60 hours with 120 km/h winds + 1.5m storm surge.', channel: 'SMS + DD Bangla + Loudspeakers' },
+          { target: 'Fishermen (All)', targetType: 'fisherman', urgency: 'critical', message: 'ALL BOATS RETURN TO PORT — cyclone landfall in 60 hours. No fishing in Bay of Bengal for 7 days.', channel: 'Coast Guard + Fisheries Radio' },
+          { target: 'Farmers (Coastal Bengal)', targetType: 'farmer', urgency: 'high', message: '340mm rain expected. Harvest standing crops immediately. Move stored grain above flood level. Protect poultry and livestock.', channel: 'ATMA Krishi + DD Bangla' },
+        ],
+      },
+    ],
+    verdict: {
+      severity: 'critical', title: 'CYCLONE EMERGENCY — West Bengal',
+      summary: 'Deep depression in Bay of Bengal intensifying to cyclonic storm — 68% landfall probability near Digha in 56–62 hours. Peak winds 120 km/h, storm surge 1.2–1.8m, 340mm rainfall over 72 hours. 180,000 coastal residents require mandatory evacuation.',
+      agentsInput: ['Satellite Agent', 'Climate Agent'],
+      precautions: [
+        'MANDATORY EVACUATION: 180,000 Purba Medinipur coastal residents — move to 35 cyclone shelters within 48 hours',
+        'ALL FISHERMEN: Return to port immediately — no Bay of Bengal access for 7 days',
+        'NDRF + SDRF: Pre-position 8+12 teams with 240 rescue boats at Digha, Contai, Haldia',
+        'Farmers: harvest standing crops NOW — 340mm rain will flatten and waterlog fields',
+        'State Government: declare Cyclone Emergency, activate SEOC, coordinate Army/Navy standby',
+      ],
+      dispatches: [
+        { target: 'WB State Government', icon: 'dept', urgency: 'CRITICAL', message: 'Declare Cyclone Emergency. Mandatory evacuation Purba Medinipur. Open 35 shelters.' },
+        { target: 'NDRF / SDRF / Navy', icon: 'emergency', urgency: 'CRITICAL', message: 'Deploy 20 teams + 240 boats to coast. Cyclone landfall 60h at 120 km/h.' },
+        { target: 'Coastal Citizens (180K)', icon: 'public', urgency: 'CRITICAL', message: 'Evacuate NOW — cyclone landfall 48–60h. Storm surge 1.5m, winds 120 km/h.' },
+        { target: 'All Fishermen', icon: 'fisherman', urgency: 'CRITICAL', message: 'ALL VESSELS RETURN PORT — cyclone in 60h. 7-day Bay of Bengal closure.' },
+        { target: 'Coastal Farmers', icon: 'farmer', urgency: 'HIGH', message: 'Harvest immediately. 340mm rain in 72h will destroy standing crops.' },
+      ],
+    },
+  },
+
+  california: {
+    agents: [
+      { id: 'sensor', name: 'Sensor Agent', stage: 'collection', status: 'completed', statusLabel: 'DATA READY', summary: '8,400 sensors — Shasta Lake 54.1%, drought D3 conditions statewide', confidence: 93, elapsed: '1.6s',
+        dataSources: [
+          { name: 'CA DWR Shasta Lake Level', type: 'sensor', freshness: '15 min ago', quality: 98, detail: '54.1% capacity — 37.4% below historical average for date' },
+          { name: 'CDFA Groundwater Well Network (12K wells)', type: 'sensor', freshness: '1 hr ago', quality: 90, detail: 'San Joaquin Valley average depth: 28m — record low' },
+          { name: 'CA Aqueduct Flow Sensors', type: 'sensor', freshness: '5 min ago', quality: 96, detail: 'Delivery: 3,200 ML/day — 62% of contracted entitlement' },
+        ],
+        rules: [
+          { condition: 'Major reservoir < 60% AND groundwater record low', trigger: 'Shasta 54%, SJV 28m', action: 'DROUGHT D3 — mandatory conservation, agriculture curtailments', priority: 'critical' },
+        ],
+        steps: [
+          { n: 1, action: 'Poll major reservoir levels: Shasta, Oroville, Folsom', finding: 'Shasta 54.1%, Oroville 48.6%, Folsom 61.3%. All below average', alert: true },
+          { n: 2, action: 'Query groundwater network — San Joaquin Valley', finding: '28m average depth — 4.2m below 10-year average. Subsidence active in 6 counties' },
+          { n: 3, action: 'Check aqueduct delivery vs contracted entitlement', finding: '3,200 ML/day delivered = 62% of entitlement. Agriculture at 38% contracted amount' },
+        ],
+        metrics: [
+          { name: 'Shasta Level', value: '54.1%', threshold: '> 70%', ok: false },
+          { name: 'Groundwater Depth', value: '28m', threshold: '< 22m', ok: false },
+          { name: 'Aqueduct Delivery', value: '62%', threshold: '> 90%', ok: false },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: 'Drought D3 statewide. Shasta 54.1%, groundwater record 28m, aqueduct delivery at 62%.',
+        dispatches: [
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'critical', message: 'drought_D3: shasta=54%, oroville=48.6%, gw_depth=28m, delivery=62%, curtailment_active=true', channel: 'agent-bus' },
+        ],
+      },
+      { id: 'decision', name: 'Decision Agent', stage: 'decision', status: 'alert', statusLabel: 'DROUGHT EMERGENCY', summary: 'Stage 2 mandatory restrictions. Agriculture priority curtailments activated.', confidence: 90, elapsed: '1.9s',
+        dataSources: [{ name: 'Sensor Agent — drought data', type: 'api', freshness: '0 sec', quality: 93, detail: 'D3 drought, Shasta 54%, delivery 62%' }],
+        rules: [{ condition: 'USGS drought D3 AND major reservoir < 55%', trigger: 'D3 + Shasta 54.1%', action: 'Mandatory Stage 2 restrictions + agriculture curtailments', priority: 'critical' }],
+        steps: [
+          { n: 1, action: 'Classify drought severity per USGS/CDWR', finding: 'D3 Extreme Drought — 41% of state area. 12 counties in D4 Exceptional' },
+          { n: 2, action: 'Generate water use curtailment plan', finding: 'Agriculture: 38% curtailment (junior water rights first). Urban: Stage 2 = 20% mandatory reduction' },
+          { n: 3, action: 'Activate conservation and recycled water programs', finding: '420 MLD recycled water capacity available — expand to 680 MLD by Q4' },
+        ],
+        metrics: [
+          { name: 'Drought Class', value: 'D3 Extreme', threshold: '< D2', ok: false },
+          { name: 'Urban Reduction', value: '20% mandatory', threshold: '—', ok: false },
+          { name: 'Ag Curtailment', value: '38%', threshold: '—', ok: false },
+        ],
+        issueFound: true, severity: 'critical', issueSummary: 'D3 Extreme Drought — Stage 2 mandatory 20% urban reduction, 38% agriculture curtailment.',
+        dispatches: [
+          { target: 'State Water Board', targetType: 'dept', urgency: 'critical', message: 'Enforce Stage 2 mandatory 20% reduction. Curtail junior water rights statewide. Activate recycled water expansion.', channel: 'Emergency Order' },
+          { target: 'Citizens (Urban CA)', targetType: 'public', urgency: 'high', message: 'DROUGHT EMERGENCY: 20% mandatory water reduction. Outdoor watering 2 days/week only. Fines up to $500/day for violations.', channel: 'Emergency Broadcast + SMS' },
+          { target: 'Farmers (San Joaquin)', targetType: 'farmer', urgency: 'critical', message: 'Agriculture curtailment 38% — junior rights first. Drip irrigation required. Fallow program incentives available: $800/acre.', channel: 'CDFA Agricultural Alert' },
+        ],
+      },
+    ],
+    verdict: {
+      severity: 'critical', title: 'DROUGHT D3 EMERGENCY — California',
+      summary: 'D3 Extreme Drought across 41% of state. Shasta Lake at 54.1% (37% below historical). Groundwater record 28m depth in San Joaquin Valley. Aqueduct delivery at 62% of contracted entitlement. Mandatory Stage 2 restrictions activated.',
+      agentsInput: ['Sensor Agent'],
+      precautions: [
+        'Stage 2 Mandatory: 20% urban water reduction — enforce immediately, $500/day fines',
+        'Agriculture curtailment 38% — junior water rights suspended, senior rights restricted',
+        'Fallow incentive program: $800/acre for farmers to take land out of production',
+        'Accelerate recycled water: 420→680 MLD capacity expansion by Q4 2026',
+        'Citizens: outdoor watering max 2 days/week, no ornamental fountain use, short showers',
+      ],
+      dispatches: [
+        { target: 'State Water Resources Board', icon: 'dept', urgency: 'CRITICAL', message: 'Stage 2 mandatory restrictions. Curtail junior rights. Enforce 20% urban reduction.' },
+        { target: 'Urban Residents (CA)', icon: 'public', urgency: 'HIGH', message: '20% mandatory reduction. Outdoor 2 days/week. Fines up to $500/day.' },
+        { target: 'Farmers (San Joaquin Valley)', icon: 'farmer', urgency: 'CRITICAL', message: '38% curtailment. Drip irrigation required. Fallow program $800/acre.' },
+      ],
+    },
+  },
 }
 
 // Generic fallback for other states
@@ -442,7 +841,7 @@ function genericWorkflow(stateName: string): StateWorkflow {
         steps: [
           { n: 1, action: 'Poll all IoT sensors via SCADA', finding: '42,184 readings received. Latency 1.8s. Quality 88%.' },
           { n: 2, action: 'Cross-validate readings with redundant sensors', finding: 'Validation passed. 3 sensors flagged for maintenance.' },
-          { n: 3, action: 'Package data bundle for analysis agents', finding: 'Bundle prepared — passing to analysis stage.' },
+          { n: 3, action: 'Package data bundle for analysis agents', finding: 'Bundle prepared — passing to analysis and satellite stages.' },
         ],
         metrics: [
           { name: 'Sensor Uptime', value: '98.2%', threshold: '> 95%', ok: true },
@@ -450,33 +849,104 @@ function genericWorkflow(stateName: string): StateWorkflow {
           { name: 'Readings Ingested', value: '42K', threshold: 'N/A', ok: true },
         ],
         issueFound: false,
-        dispatches: [{ target: 'Analysis Agents', targetType: 'agent', urgency: 'medium', message: 'Sensor bundle ready — 42K readings packaged', channel: 'agent-bus' }],
+        dispatches: [
+          { target: 'Analysis Agent', targetType: 'agent', urgency: 'medium', message: 'Sensor bundle ready — 42K readings packaged', channel: 'agent-bus' },
+          { target: 'Satellite Agent', targetType: 'agent', urgency: 'low', message: 'Request current imagery for water body change detection', channel: 'agent-bus' },
+        ],
+      },
+      {
+        id: 'satellite', name: 'Satellite Agent', stage: 'collection', status: 'completed', statusLabel: 'IMAGERY PROCESSED',
+        summary: `${stateName} — Sentinel-2 NDWI analysis complete. Water bodies within seasonal norms.`,
+        confidence: 84, elapsed: '5.2s',
+        dataSources: [
+          { name: 'Sentinel-2 NDWI Water Index', type: 'satellite', freshness: '2 days ago', quality: 91, detail: 'Water body extent within seasonal baseline ±5%' },
+          { name: 'MODIS Land Surface Temperature', type: 'satellite', freshness: '1 day ago', quality: 87, detail: 'LST normal range — no thermal anomalies' },
+          { name: 'GRACE-FO Groundwater Anomaly', type: 'satellite', freshness: '1 month ago', quality: 82, detail: `${stateName} groundwater storage: -2.1 cm vs baseline — marginal deficit` },
+        ],
+        rules: [
+          { condition: 'NDWI change > 15% vs baseline', trigger: 'Not triggered', action: 'Flag for FloodAgent or DroughtAgent depending on direction', priority: 'medium' },
+          { condition: 'GRACE anomaly > -10 cm', trigger: '-2.1 cm — within normal', action: 'No action — monitor monthly', priority: 'low' },
+        ],
+        steps: [
+          { n: 1, action: 'Retrieve Sentinel-2 latest overpass for region', finding: 'Scene acquired 2 days ago — 10m resolution. NDWI computed.' },
+          { n: 2, action: 'Compare current water extent vs seasonal baseline', finding: 'Water bodies within ±5% of seasonal norm — no significant change' },
+          { n: 3, action: 'Analyse GRACE-FO groundwater storage anomaly', finding: 'Groundwater -2.1 cm below baseline — marginal, monitoring recommended' },
+          { n: 4, action: 'Package imagery summary and pass to AnalysisAgent', finding: 'All normal. Passing green-status bundle to Analysis stage.' },
+        ],
+        metrics: [
+          { name: 'NDWI Change', value: '±4%', threshold: '< ±15%', ok: true },
+          { name: 'GRACE Anomaly', value: '-2.1 cm', threshold: '> -10 cm', ok: true },
+          { name: 'Scene Age', value: '2 days', threshold: '< 7 days', ok: true },
+        ],
+        issueFound: false,
+        dispatches: [
+          { target: 'Analysis Agent', targetType: 'agent', urgency: 'low', message: 'Satellite: NORMAL — water extent ±4%, GRACE -2.1cm, no anomalies', channel: 'agent-bus' },
+        ],
+      },
+      {
+        id: 'analysis', name: 'Water Analysis Agent', stage: 'analysis', status: 'completed', statusLabel: 'NORMAL',
+        summary: `${stateName} — all parameters within safe thresholds. Seasonal outlook moderate.`,
+        confidence: 86, elapsed: '2.4s',
+        dataSources: [
+          { name: 'Sensor Agent bundle', type: 'api', freshness: '0 sec', quality: 88, detail: '42K readings — all within normal range' },
+          { name: 'Satellite Agent imagery summary', type: 'api', freshness: '0 sec', quality: 84, detail: 'Water extent normal, GRACE -2.1cm' },
+          { name: 'Open-Meteo API (7-day forecast)', type: 'api', freshness: '5 min ago', quality: 90, detail: '7-day rainfall 120mm, temp 32°C avg — seasonal' },
+        ],
+        rules: [
+          { condition: 'All inputs within normal band', trigger: 'No threshold breaches', action: 'Report NORMAL to DecisionAgent — continuous monitoring', priority: 'low' },
+          { condition: '7-day rainfall > 150% seasonal average', trigger: 'Not triggered (120mm is seasonal)', action: 'Escalate to FloodAgent', priority: 'medium' },
+        ],
+        steps: [
+          { n: 1, action: 'Merge sensor + satellite data for composite analysis', finding: 'All 42K readings normal. Satellite confirms — no anomalies detected' },
+          { n: 2, action: 'Run WHO water quality screening', finding: 'pH 7.2, turbidity 2.1 NTU, chlorine 0.9 mg/L — all within WHO safe range' },
+          { n: 3, action: 'Compute seasonal water stress index', finding: 'Water stress index 0.38 — LOW (below 0.4 threshold for concern)' },
+          { n: 4, action: 'Generate 7-day outlook from Open-Meteo', finding: '120mm forecast — within seasonal norms. No extreme event predicted.' },
+        ],
+        metrics: [
+          { name: 'Water Stress Index', value: '0.38', threshold: '< 0.40', ok: true },
+          { name: 'WQI Score', value: '87', threshold: '> 80', ok: true },
+          { name: '7-Day Rainfall', value: '120mm', threshold: 'Seasonal', ok: true },
+        ],
+        issueFound: false,
+        dispatches: [
+          { target: 'Decision Agent', targetType: 'agent', urgency: 'low', message: 'status=NORMAL, wsi=0.38, wqi=87, rainfall_7d=120mm — no action required', channel: 'agent-bus' },
+        ],
       },
       {
         id: 'decision', name: 'Decision Agent', stage: 'decision', status: 'completed', statusLabel: 'MONITORING',
         summary: `${stateName} — normal conditions. Continuous monitoring active. No immediate action required.`,
-        confidence: 85, elapsed: '2.1s',
+        confidence: 85, elapsed: '1.4s',
         dataSources: [
           { name: 'Sensor Agent bundle', type: 'api', freshness: '0 sec', quality: 88, detail: '42K readings — all within normal range' },
-          { name: 'Open-Meteo API', type: 'api', freshness: '5 min ago', quality: 90, detail: '7-day forecast — moderate conditions' },
+          { name: 'Satellite Agent', type: 'api', freshness: '0 sec', quality: 84, detail: 'Water extent normal, GRACE -2.1cm' },
+          { name: 'Water Analysis Agent', type: 'api', freshness: '0 sec', quality: 86, detail: 'WSI 0.38, WQI 87, rainfall normal' },
         ],
         rules: [
-          { condition: 'All agents report NORMAL', trigger: 'No threshold breaches', action: 'Continue monitoring. Report to dashboard.', priority: 'low' },
+          { condition: 'All agents report NORMAL', trigger: 'No threshold breaches from 3 agents', action: 'Continue monitoring. Report to dashboard. Next full review: 4 hours.', priority: 'low' },
+          { condition: 'Any single agent reports ELEVATED', trigger: 'Not triggered', action: 'Convene 2-agent consensus check before escalating', priority: 'medium' },
         ],
         steps: [
-          { n: 1, action: 'Aggregate all agent inputs', finding: 'All agents reporting within normal parameters' },
-          { n: 2, action: 'Apply governance thresholds', finding: 'No thresholds breached — no emergency actions required' },
-          { n: 3, action: 'Generate routine status report', finding: `${stateName} water status: NORMAL. Next review: 4 hours.` },
+          { n: 1, action: 'Aggregate inputs from 3 upstream agents', finding: 'All 3 agents: NORMAL. Confidence-weighted synthesis: 86%' },
+          { n: 2, action: 'Apply governance decision thresholds', finding: 'No thresholds breached. No emergency or precautionary actions triggered.' },
+          { n: 3, action: 'Generate routine status report for dashboard', finding: `${stateName}: NORMAL status confirmed. Monitoring continues at 30-min cadence.` },
+          { n: 4, action: 'Schedule next agent cycle', finding: 'Next full cycle: 4 hours. Continuous sensor monitoring: 30 minutes.' },
         ],
-        metrics: [{ name: 'Overall Status', value: 'NORMAL', threshold: 'N/A', ok: true }],
+        metrics: [
+          { name: 'Overall Status', value: 'NORMAL', threshold: 'N/A', ok: true },
+          { name: 'Agents Consulted', value: '3/3', threshold: '3/3', ok: true },
+          { name: 'Confidence', value: '86%', threshold: '> 80%', ok: true },
+        ],
         issueFound: false,
-        dispatches: [{ target: 'Dashboard', targetType: 'dept', urgency: 'low', message: 'Routine status update — no alerts', channel: 'API' }],
+        dispatches: [
+          { target: 'Dashboard', targetType: 'dept', urgency: 'low', message: `${stateName} routine status: NORMAL. No alerts. Next review 4 hours.`, channel: 'API' },
+          { target: 'Operations Team', targetType: 'dept', urgency: 'low', message: 'All systems nominal. Routine monitoring continues. No action required.', channel: 'Ops Portal' },
+        ],
       },
     ],
     verdict: {
       severity: 'clear', title: `Normal Operations — ${stateName}`,
-      summary: `All water parameters within normal range for ${stateName}. Continuous AI monitoring active. No immediate action required.`,
-      agentsInput: ['Sensor Agent', 'Decision Agent'],
+      summary: `All water parameters within normal range for ${stateName}. 42K sensor readings, satellite imagery, and climate forecast all confirm seasonal norms. Continuous AI monitoring active. No immediate action required.`,
+      agentsInput: ['Sensor Agent', 'Satellite Agent', 'Water Analysis Agent'],
       precautions: ['Continue routine monitoring', 'Ensure sensor network maintenance schedule is current', 'Review seasonal outlook for upcoming quarter'],
       dispatches: [
         { target: 'Operations Team', icon: 'dept', urgency: 'LOW', message: 'Normal status. Routine monitoring continues. Next scheduled report in 4 hours.' },

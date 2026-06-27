@@ -34,8 +34,8 @@
     "react-hot-toast": "^2.4.1",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^6.28.0",
-    "reactflow": "^11.11.4",
     "react-simple-maps": "^3.0.0",
+    "reactflow": "^11.11.4",
     "recharts": "^2.13.3",
     "tailwind-merge": "^2.5.5",
     "zustand": "^5.0.2"
