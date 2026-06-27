@@ -299,7 +299,32 @@ export function CountriesPage() {
   const { data } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
-      try { const r = await countriesApi.list(); return r.data?.countries ?? r.data }
+      try {
+        const r = await countriesApi.list()
+        const raw = r.data?.countries ?? r.data
+        if (!Array.isArray(raw) || !raw[0]) return mockCountries
+        return raw.map((c: Record<string, unknown>) => {
+          const nameStr = String(c.name ?? '')
+          const normalizedId = nameStr.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '')
+          const mock = mockCountries.find(m => m.id === normalizedId || m.name.toLowerCase() === nameStr.toLowerCase())
+          const droughtRaw = String(c.drought_risk ?? mock?.drought_risk ?? 'Medium')
+          const floodRaw = String(c.flood_risk ?? mock?.flood_risk ?? 'Medium')
+          const statusRaw = String(c.status ?? mock?.status ?? 'monitoring')
+          const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
+          return {
+            id: normalizedId || mock?.id || String(c.id ?? ''),
+            name: nameStr || mock?.name || '',
+            emoji: mock?.emoji ?? '🌍',
+            continent: String(c.continent ?? mock?.continent ?? 'Unknown'),
+            water_score: Number(c.water_score ?? c.water_quality_score ?? mock?.water_score ?? 0),
+            drought_risk: capitalize(droughtRaw),
+            flood_risk: capitalize(floodRaw),
+            reservoir_capacity: Number(c.reservoir_capacity ?? c.storage_level_pct ?? c.reservoir_level_pct ?? mock?.reservoir_capacity ?? 0),
+            sensors: Number(c.sensor_count ?? c.sensors ?? c.active_sensors ?? mock?.sensors ?? 0),
+            status: capitalize(statusRaw === 'healthy' ? 'Good' : statusRaw === 'monitoring' ? 'Warning' : statusRaw),
+          }
+        })
+      }
       catch { return mockCountries }
     },
   })
@@ -308,8 +333,11 @@ export function CountriesPage() {
     riskFilter === 'All' || c.drought_risk === riskFilter || c.flood_risk === riskFilter
   )
 
-  const selectedCountry = mockCountries.find(c => c.id === selectedId)
-  const insight = selectedId ? (COUNTRY_INSIGHTS[selectedId] ?? GLOBAL_INSIGHT) : GLOBAL_INSIGHT
+  const selectedCountry = (data ?? mockCountries).find((c: typeof mockCountries[0]) => c.id === selectedId)
+  const insightKey = selectedId && !COUNTRY_INSIGHTS[selectedId]
+    ? mockCountries.find(m => m.name.toLowerCase() === (selectedCountry?.name ?? '').toLowerCase())?.id ?? selectedId
+    : selectedId
+  const insight = insightKey ? (COUNTRY_INSIGHTS[insightKey] ?? GLOBAL_INSIGHT) : GLOBAL_INSIGHT
 
   const handleRowClick = (id: string) => {
     setSelectedId(prev => prev === id ? null : id)
@@ -320,7 +348,7 @@ export function CountriesPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-white flex items-center gap-2"><Flag className="w-5 h-5 text-blue-400" /> Countries</h1>
-          <p className="text-sm text-slate-500 mt-0.5">195 countries monitored · Hierarchical AI water intelligence</p>
+          <p className="text-sm text-slate-500 mt-0.5">195 countries monitored · Click a country for AI intelligence</p>
         </div>
         <div className="flex items-center gap-2">
           <select
@@ -334,6 +362,94 @@ export function CountriesPage() {
           <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-blue-600/20 text-blue-400' : 'text-slate-400 hover:bg-white/5'}`}><LayoutGrid className="w-4 h-4" /></button>
         </div>
       </div>
+
+      {/* AI Insights panel — ABOVE the table, always visible, updates on click */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedId ?? 'global'}
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 8 }}
+          transition={{ duration: 0.2 }}
+        >
+          <GlassCard className="p-5" glow="blue">
+            <div className="flex items-start justify-between mb-4 gap-4">
+              <div className="flex items-center gap-2">
+                <Brain className="w-4 h-4 text-blue-400 shrink-0" />
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    AI Insights — {selectedCountry ? `${selectedCountry.emoji} ${selectedCountry.name}` : 'Global Overview'}
+                  </h3>
+                  <p className="text-[10px] text-slate-500">
+                    {selectedCountry ? 'Country-specific agent intelligence' : 'Click any country below for detailed analysis'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="text-right">
+                  <p className="text-xl font-bold text-blue-400">{insight.confidence}%</p>
+                  <p className="text-[10px] text-slate-500">confidence</p>
+                </div>
+                {selectedCountry && (
+                  <button
+                    onClick={() => { setSelectedId(null) }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs text-slate-400 font-medium transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2 space-y-2">
+                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Agent Intelligence</p>
+                {insight.insights.map((ins, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+                    className="flex items-start gap-2.5 p-2.5 bg-white/3 rounded-lg border border-white/5">
+                    <CheckCircle className="w-3 h-3 text-blue-400 mt-0.5 shrink-0" />
+                    <p className="text-xs text-slate-300 leading-relaxed">{ins}</p>
+                  </motion.div>
+                ))}
+                {insight.alerts.length > 0 && (
+                  <div className="mt-2 space-y-1.5">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Active Alerts</p>
+                    {insight.alerts.map((alert, i) => (
+                      <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
+                        className="flex items-start gap-2 p-2 bg-red-500/5 rounded-lg border border-red-500/20">
+                        <AlertTriangle className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
+                        <p className="text-xs text-red-300">{alert}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Active Agents</p>
+                  <div className="space-y-1.5">
+                    {insight.agents.map((a, i) => (
+                      <motion.div key={a} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
+                        className="flex items-center gap-2 p-2 bg-white/3 rounded-lg border border-white/5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                        <span className="text-xs text-white">{a}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-1.5">Tools Called</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {insight.tools.map(t => (
+                      <span key={t} className="text-[10px] px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
+        </motion.div>
+      </AnimatePresence>
 
       {viewMode === 'table' ? (
         <GlassCard className="overflow-hidden">
@@ -374,8 +490,8 @@ export function CountriesPage() {
                   </td>
                   <td className="px-4 py-3"><span className={`text-[10px] px-2 py-0.5 rounded-full ${riskColors[c.drought_risk]}`}>{c.drought_risk}</span></td>
                   <td className="px-4 py-3"><span className={`text-[10px] px-2 py-0.5 rounded-full ${riskColors[c.flood_risk]}`}>{c.flood_risk}</span></td>
-                  <td className="px-4 py-3"><span className="text-xs text-white">{c.reservoir_capacity}%</span></td>
-                  <td className="px-4 py-3"><span className="text-xs text-slate-400">{(c.sensors / 1000).toFixed(0)}K</span></td>
+                  <td className="px-4 py-3"><span className="text-xs text-white">{c.reservoir_capacity > 0 ? `${c.reservoir_capacity}%` : '—'}</span></td>
+                  <td className="px-4 py-3"><span className="text-xs text-slate-400">{c.sensors > 0 ? `${(c.sensors / 1000).toFixed(0)}K` : '—'}</span></td>
                   <td className="px-4 py-3"><span className={`text-xs font-medium ${statusColors[c.status]}`}>{c.status}</span></td>
                 </motion.tr>
               ))}
@@ -406,97 +522,6 @@ export function CountriesPage() {
         </div>
       )}
 
-      {/* AI Insights — updates when a country is selected */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={selectedId ?? 'global'}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25 }}
-        >
-          <GlassCard className="p-5" glow="blue">
-            <div className="flex items-start justify-between mb-4 gap-4">
-              <div className="flex items-center gap-2">
-                <Brain className="w-4 h-4 text-blue-400 shrink-0" />
-                <div>
-                  <h3 className="text-sm font-semibold text-white">
-                    AI Insights — {selectedCountry ? `${selectedCountry.emoji} ${selectedCountry.name}` : 'Global Overview'}
-                  </h3>
-                  <p className="text-[10px] text-slate-500">
-                    {selectedCountry ? 'Country-specific agent intelligence' : 'Click a country row for detailed analysis'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="text-right">
-                  <p className="text-xl font-bold text-blue-400">{insight.confidence}%</p>
-                  <p className="text-[10px] text-slate-500">confidence</p>
-                </div>
-                {selectedCountry && (
-                  <button
-                    onClick={() => navigate(`/countries/${selectedId}`)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-xs text-blue-400 font-medium transition-colors"
-                  >
-                    Full Report <ArrowRight className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Insights */}
-              <div className="lg:col-span-2 space-y-2">
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Agent Intelligence</p>
-                {insight.insights.map((ins, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                    className="flex items-start gap-2.5 p-2.5 bg-white/3 rounded-lg border border-white/5">
-                    <CheckCircle className="w-3 h-3 text-blue-400 mt-0.5 shrink-0" />
-                    <p className="text-xs text-slate-300 leading-relaxed">{ins}</p>
-                  </motion.div>
-                ))}
-
-                {insight.alerts.length > 0 && (
-                  <div className="mt-2 space-y-1.5">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Active Alerts</p>
-                    {insight.alerts.map((alert, i) => (
-                      <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
-                        className="flex items-start gap-2 p-2 bg-red-500/5 rounded-lg border border-red-500/20">
-                        <AlertTriangle className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
-                        <p className="text-xs text-red-300">{alert}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Agents + Tools */}
-              <div className="space-y-3">
-                <div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Active Agents</p>
-                  <div className="space-y-1.5">
-                    {insight.agents.map((a, i) => (
-                      <motion.div key={a} initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
-                        className="flex items-center gap-2 p-2 bg-white/3 rounded-lg border border-white/5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                        <span className="text-xs text-white">{a}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Tools Called</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {insight.tools.map(t => (
-                      <span key={t} className="text-[10px] px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </GlassCard>
-        </motion.div>
-      </AnimatePresence>
     </div>
   )
 }

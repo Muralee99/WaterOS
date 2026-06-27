@@ -7,14 +7,14 @@ import { cn } from '@/utils/cn'
 import type { WaterQualityReading } from '@/types'
 
 const MOCK_QUALITY: WaterQualityReading[] = [
-  { id: '1', location: 'Mumbai — Bhandup WTP',          latitude: 19.17, longitude: 72.94, ph: 7.2,  turbidity_ntu: 1.8,  chlorine_mg_l: 0.8, dissolved_oxygen: 7.4, safety_score: 92, status: 'safe',    last_updated: '2 min ago' },
-  { id: '2', location: 'Delhi — Sonia Vihar WTP',       latitude: 28.73, longitude: 77.27, ph: 8.1,  turbidity_ntu: 6.4,  chlorine_mg_l: 0.4, dissolved_oxygen: 5.8, safety_score: 61, status: 'warning', last_updated: '5 min ago' },
-  { id: '3', location: 'Guwahati — Brahmaputra Intake', latitude: 26.18, longitude: 91.73, ph: 7.8,  turbidity_ntu: 12.1, chlorine_mg_l: 0.2, dissolved_oxygen: 4.9, safety_score: 44, status: 'unsafe',  last_updated: '8 min ago' },
-  { id: '4', location: 'Jaipur — Bisalpur WTP',         latitude: 26.91, longitude: 75.79, ph: 7.5,  turbidity_ntu: 2.1,  chlorine_mg_l: 1.1, dissolved_oxygen: 7.1, safety_score: 88, status: 'safe',    last_updated: '3 min ago' },
-  { id: '5', location: 'Houston — Lake Houston WTP',    latitude: 29.97, longitude: -95.1, ph: 7.1,  turbidity_ntu: 0.9,  chlorine_mg_l: 1.4, dissolved_oxygen: 8.2, safety_score: 96, status: 'safe',    last_updated: '1 min ago' },
-  { id: '6', location: 'Los Angeles — Jensen WTP',      latitude: 34.07, longitude: -118.3,ph: 7.4,  turbidity_ntu: 1.2,  chlorine_mg_l: 1.2, dissolved_oxygen: 7.9, safety_score: 94, status: 'safe',    last_updated: '4 min ago' },
-  { id: '7', location: 'Munich — Mangfall WTP',         latitude: 48.14, longitude: 11.58, ph: 7.0,  turbidity_ntu: 0.4,  chlorine_mg_l: 0.5, dissolved_oxygen: 9.1, safety_score: 98, status: 'safe',    last_updated: '2 min ago' },
-  { id: '8', location: 'Cairo — El-Salam WTP',          latitude: 30.06, longitude: 31.24, ph: 7.9,  turbidity_ntu: 4.8,  chlorine_mg_l: 0.6, dissolved_oxygen: 6.2, safety_score: 72, status: 'warning', last_updated: '10 min ago' },
+  { id: '1', location: 'Mumbai — Bhandup WTP',          latitude: 19.17, longitude: 72.94,  ph: 7.2,  turbidity_ntu: 1.8,  chlorine_mg_l: 0.8, dissolved_oxygen: 7.4, safety_score: 92, status: 'safe',    measured_at: new Date(Date.now() - 2*60000).toISOString() },
+  { id: '2', location: 'Delhi — Sonia Vihar WTP',       latitude: 28.73, longitude: 77.27,  ph: 8.1,  turbidity_ntu: 6.4,  chlorine_mg_l: 0.4, dissolved_oxygen: 5.8, safety_score: 61, status: 'warning', measured_at: new Date(Date.now() - 5*60000).toISOString() },
+  { id: '3', location: 'Guwahati — Brahmaputra Intake', latitude: 26.18, longitude: 91.73,  ph: 7.8,  turbidity_ntu: 12.1, chlorine_mg_l: 0.2, dissolved_oxygen: 4.9, safety_score: 44, status: 'danger',  measured_at: new Date(Date.now() - 8*60000).toISOString() },
+  { id: '4', location: 'Jaipur — Bisalpur WTP',         latitude: 26.91, longitude: 75.79,  ph: 7.5,  turbidity_ntu: 2.1,  chlorine_mg_l: 1.1, dissolved_oxygen: 7.1, safety_score: 88, status: 'safe',    measured_at: new Date(Date.now() - 3*60000).toISOString() },
+  { id: '5', location: 'Houston — Lake Houston WTP',    latitude: 29.97, longitude: -95.1,  ph: 7.1,  turbidity_ntu: 0.9,  chlorine_mg_l: 1.4, dissolved_oxygen: 8.2, safety_score: 96, status: 'safe',    measured_at: new Date(Date.now() - 1*60000).toISOString() },
+  { id: '6', location: 'Los Angeles — Jensen WTP',      latitude: 34.07, longitude: -118.3, ph: 7.4,  turbidity_ntu: 1.2,  chlorine_mg_l: 1.2, dissolved_oxygen: 7.9, safety_score: 94, status: 'safe',    measured_at: new Date(Date.now() - 4*60000).toISOString() },
+  { id: '7', location: 'Munich — Mangfall WTP',         latitude: 48.14, longitude: 11.58,  ph: 7.0,  turbidity_ntu: 0.4,  chlorine_mg_l: 0.5, dissolved_oxygen: 9.1, safety_score: 98, status: 'safe',    measured_at: new Date(Date.now() - 2*60000).toISOString() },
+  { id: '8', location: 'Cairo — El-Salam WTP',          latitude: 30.06, longitude: 31.24,  ph: 7.9,  turbidity_ntu: 4.8,  chlorine_mg_l: 0.6, dissolved_oxygen: 6.2, safety_score: 72, status: 'warning', measured_at: new Date(Date.now() - 10*60000).toISOString() },
 ]
 
 function StatusIcon({ status }: { status: string }) {

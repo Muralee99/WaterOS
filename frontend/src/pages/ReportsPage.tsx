@@ -218,7 +218,7 @@ export function ReportsPage() {
                     <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
                     <p className="text-sm font-semibold text-white mb-1">Report Generated!</p>
                     <p className="text-xs text-slate-400">Your report is ready for download</p>
-                    <button onClick={() => { setShowGenerate(false); setGenerated(false); setForm({ title: '', type: 'Executive', scope: 'Global', agents: [] }) }}
+                    <button onClick={() => { setShowGenerate(false); setGenerated(false); setForm({ title: '', type: 'Executive', scope: 'Global', country: '', agents: [] }) }}
                       className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs text-white transition-colors">
                       Close
                     </button>

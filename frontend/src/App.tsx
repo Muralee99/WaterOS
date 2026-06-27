@@ -37,7 +37,7 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+      <Route path="/login" element={<LoginPage />} />
       <Route
         path="/"
         element={
