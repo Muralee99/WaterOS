@@ -46,23 +46,75 @@
 
 ## 🖥 Screenshots
 
-| Dashboard — KPIs + AI Reasoning | Global Intelligence — 195 Countries |
-|----------------------------------|--------------------------------------|
-| ![Dashboard](demo/screenshots/02-dashboard.png) | ![Global](demo/screenshots/03-global.png) |
+### Platform Overview
 
-| Countries Drill-Down + AI Insights | Live Sensor Grid (5s refresh) |
-|------------------------------------|-------------------------------|
-| ![Countries](demo/screenshots/04-countries.png) | ![Sensors](demo/screenshots/07-sensors.png) |
+| Login | Dashboard — Water Intelligence KPIs |
+|-------|--------------------------------------|
+| ![Login](demo/screenshots/01-login.png) | ![Dashboard](demo/screenshots/02-dashboard.png) |
 
-| Agent Console — Live Trace Animation | Observability Panel — Session History |
-|--------------------------------------|---------------------------------------|
-| ![Agents](demo/screenshots/11-agents.png) | ![Observability](demo/screenshots/12-observability.png) |
+| Global Intelligence — 195 Countries | Alerts & Incidents |
+|--------------------------------------|-------------------|
+| ![Global](demo/screenshots/03-global.png) | ![Alerts](demo/screenshots/17-alerts.png) |
 
-| Knowledge Graph — 60 Nodes | Digital Twin Simulation |
-|---------------------------|-------------------------|
-| ![Graph](demo/screenshots/13-knowledge-graph.png) | ![Twin](demo/screenshots/14-digital-twin.png) |
+---
 
-> Generate screenshots: `docker compose up -d && node scripts/take-screenshots.mjs`
+### Geographic Intelligence
+
+| Countries — Table View | Countries — AI Insights Panel (India selected) |
+|------------------------|------------------------------------------------|
+| ![Countries](demo/screenshots/04-countries.png) | ![Countries AI](demo/screenshots/04b-countries-ai-insights.png) |
+
+| Rivers + AI Insights | Cities + AI Insights |
+|----------------------|----------------------|
+| ![Rivers](demo/screenshots/08b-rivers-ai-insights.png) | ![Cities](demo/screenshots/06b-cities-ai-insights.png) |
+
+| Live Sensor Grid | Pipelines Network |
+|-----------------|------------------|
+| ![Sensors](demo/screenshots/07-sensors.png) | ![Pipelines](demo/screenshots/09-pipelines.png) |
+
+| Reservoirs | Water Quality |
+|-----------|--------------|
+| ![Reservoirs](demo/screenshots/19-reservoirs.png) | ![Quality](demo/screenshots/10-water-quality.png) |
+
+---
+
+### 🤖 Agentic Flows — Core Differentiator
+
+| Agent Console — 14 Agents Overview | Geographic Context Selected (India → Assam) |
+|------------------------------------|---------------------------------------------|
+| ![Agents Overview](demo/screenshots/13-agents-overview.png) | ![Agents Geo](demo/screenshots/13b-agents-geo-context.png) |
+
+| Flood Agent — Live Step Trace (mid-execution) | Flood Agent — Full Result with Reasoning Chain |
+|------------------------------------------------|------------------------------------------------|
+| ![Live Trace](demo/screenshots/13c-agents-live-trace.png) | ![Agent Result](demo/screenshots/13d-agents-result.png) |
+
+| Reasoning Chain Expanded — Step-by-Step Evidence | Decision Agent — A2A Orchestration Result |
+|--------------------------------------------------|------------------------------------------|
+| ![Reasoning Chain](demo/screenshots/13e-agents-reasoning-chain.png) | ![Decision Agent](demo/screenshots/13h-decision-agent-result.png) |
+
+| Observability Panel — Session History + Metrics | Decision Agent Running — A2A Invocations |
+|------------------------------------------------|------------------------------------------|
+| ![Observability](demo/screenshots/13f-agents-observability.png) | ![Decision Running](demo/screenshots/13g-decision-agent-running.png) |
+
+---
+
+### Intelligence & Analytics
+
+| Climate Analysis | 7-Day Forecast |
+|-----------------|----------------|
+| ![Climate](demo/screenshots/11-climate.png) | ![Forecast](demo/screenshots/12-forecast.png) |
+
+| Agent Workflow — A2A Visualization | Knowledge Graph — Semantic Network |
+|------------------------------------|-----------------------------------|
+| ![Workflow](demo/screenshots/14-workflow.png) | ![Knowledge Graph](demo/screenshots/15-knowledge-graph.png) |
+
+| Digital Twin Simulation | Reports |
+|------------------------|---------|
+| ![Digital Twin](demo/screenshots/16-digital-twin.png) | ![Reports](demo/screenshots/18-reports.png) |
+
+---
+
+> Regenerate all screenshots: `docker compose up -d && node scripts/take-screenshots.mjs`
 
 ---
 
