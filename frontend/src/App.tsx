@@ -23,6 +23,7 @@ import { SensorsPage } from '@/pages/SensorsPage'
 import { ClimatePage } from '@/pages/ClimatePage'
 import { KnowledgeGraphPage } from '@/pages/KnowledgeGraphPage'
 import { ReportsPage } from '@/pages/ReportsPage'
+import { AgentObservabilityPage } from '@/pages/AgentObservabilityPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore()
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="forecast" element={<ForecastPage />} />
         {/* AI Systems */}
         <Route path="agents" element={<AgentConsolePage />} />
+        <Route path="observability" element={<AgentObservabilityPage />} />
         <Route path="workflow" element={<WorkflowPage />} />
         <Route path="knowledge-graph" element={<KnowledgeGraphPage />} />
         <Route path="digital-twin" element={<SimulationPage />} />

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import {
   LayoutDashboard, Globe, Flag, Map, Building2, Waves, Droplets,
   Radio, FlaskConical, CloudSun, TrendingUp, Bot, Network, Share2,
-  Layers, Play, Bell, FileText, Settings, LogOut, GitCommit, Cpu
+  Layers, Play, Bell, FileText, Settings, LogOut, GitCommit, Cpu, Activity
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/utils/cn'
@@ -40,6 +40,7 @@ const navGroups = [
     label: 'AI SYSTEMS',
     items: [
       { path: '/agents', icon: Bot, label: 'Agent Console' },
+      { path: '/observability', icon: Activity, label: 'Observability' },
       { path: '/workflow', icon: Network, label: 'AI Collaboration' },
       { path: '/knowledge-graph', icon: Share2, label: 'Knowledge Graph' },
       { path: '/digital-twin', icon: Cpu, label: 'Digital Twin' },
