@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactElement } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain, Radio, Globe, Database, Satellite, Cpu, AlertTriangle,
@@ -504,7 +504,7 @@ const SEVERITY_STYLE: Record<string, string> = {
   low:      'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
   clear:    'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
 }
-const SRC_ICON: Record<SrcType, JSX.Element> = {
+const SRC_ICON: Record<SrcType, ReactElement> = {
   sensor:    <Radio className="w-3 h-3 text-amber-400" />,
   satellite: <Satellite className="w-3 h-3 text-purple-400" />,
   api:       <Globe className="w-3 h-3 text-emerald-400" />,
@@ -512,7 +512,7 @@ const SRC_ICON: Record<SrcType, JSX.Element> = {
   model:     <Cpu className="w-3 h-3 text-blue-400" />,
   db:        <Database className="w-3 h-3 text-blue-400" />,
 }
-const DISPATCH_ICON: Record<string, JSX.Element> = {
+const DISPATCH_ICON: Record<string, ReactElement> = {
   building:  <Building2 className="w-4 h-4" />,
   emergency: <Zap className="w-4 h-4" />,
   public:    <Users className="w-4 h-4" />,
@@ -690,7 +690,7 @@ function DetailPanel({ agent }: { agent: AgentDef }) {
           {tab === 'actions' && (
             <div className="space-y-1.5">
               {agent.dispatches.map((d, i) => {
-                const icons: Record<string, JSX.Element> = {
+                const icons: Record<string, ReactElement> = {
                   dept: <Building2 className="w-3.5 h-3.5" />, agent: <Brain className="w-3.5 h-3.5" />,
                   public: <Users className="w-3.5 h-3.5" />, emergency: <Zap className="w-3.5 h-3.5" />,
                   farmer: <Wheat className="w-3.5 h-3.5" />, fisherman: <Fish className="w-3.5 h-3.5" />,
