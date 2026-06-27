@@ -50,12 +50,17 @@ export const reservoirApi = {
 
 export const agentApi = {
   list: () => api.get('/agents'),
-  run: (agentId: string, context: Record<string, unknown> = {}) =>
-    api.post('/agents/run', { agent_id: agentId, context }),
-  chat: (message: string, agentId = 'decision_agent') =>
-    api.post('/agents/chat', { message, agent_id: agentId }),
+  run: (agentId: string, context: Record<string, unknown> = {}, sessionId?: string) =>
+    api.post('/agents/run', { agent_id: agentId, context, session_id: sessionId }),
+  chat: (message: string, agentId = 'decision_agent', sessionId?: string) =>
+    api.post('/agents/chat', { message, agent_id: agentId, session_id: sessionId }),
   reason: (query: string, context: Record<string, unknown> = {}) =>
     api.post('/agents/reason', { query, context }),
+  sessions: (limit = 50, agentId?: string) =>
+    api.get('/agents/sessions', { params: { limit, ...(agentId ? { agent_id: agentId } : {}) } }),
+  clearSessions: () => api.delete('/agents/sessions'),
+  memory: (agentId: string) => api.get(`/agents/memory/${agentId}`),
+  observability: () => api.get('/agents/observability'),
 }
 
 export const waterQualityApi = {

@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 from app.core.config import settings
 from app.api.v1.router import api_router
+from app.db.base import engine, Base
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,6 +19,15 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"WaterOS {settings.APP_VERSION} starting up...")
+    # Auto-create all tables (agent_execution, agent_memory, etc.)
+    try:
+        import app.models.agent  # noqa: ensure models are registered
+        import app.models.alert  # noqa
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("Database tables ensured.")
+    except Exception as e:
+        logger.warning(f"DB init skipped: {e}")
     yield
     logger.info("WaterOS shutting down...")
 

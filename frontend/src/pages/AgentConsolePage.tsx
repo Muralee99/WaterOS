@@ -1,15 +1,17 @@
-import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useState, useEffect, useRef } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bot, Play, ChevronDown, ChevronRight,
-  Brain, Zap, MessageSquare, Loader2, Send, Globe, Flag, Building2, MapPin
+  Brain, Zap, MessageSquare, Loader2, Send, Globe, Flag, Building2, MapPin,
+  Activity, Clock, CheckCircle2, XCircle, Wrench, Trash2, RefreshCw, Database
 } from 'lucide-react'
 import { agentApi } from '@/services/api'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { cn } from '@/utils/cn'
 import type { AgentResult } from '@/types'
 import toast from 'react-hot-toast'
+import { useAgentSessionStore, type AgentSession } from '@/store/agentSessionStore'
 
 const GEO_DATA: Record<string, { states: Record<string, string[]> }> = {
   'India':         { states: { 'Maharashtra': ['Mumbai', 'Pune', 'Nagpur'], 'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur'], 'Assam': ['Guwahati', 'Dibrugarh'], 'Punjab': ['Ludhiana', 'Amritsar'] } },
@@ -291,11 +293,12 @@ function AgentResultDisplay({ agentId, result }: { agentId: string; result: Reco
 
 // ──────────────────────────────────────────────────────────
 
-function AgentCard({ agent, onRun, result, isRunning }: {
+function AgentCard({ agent, onRun, result, isRunning, liveSteps = [] }: {
   agent: { agent_id: string; name: string; description: string; category: string }
   onRun: () => void
   result?: AgentResult
   isRunning: boolean
+  liveSteps?: string[]
 }) {
   const [expanded, setExpanded] = useState(false)
   const color = AGENT_COLORS[agent.agent_id] ?? '#3B82F6'
@@ -316,7 +319,7 @@ function AgentCard({ agent, onRun, result, isRunning }: {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {result && (
+          {result && !isRunning && (
             <span className={cn(
               'text-xs px-2 py-0.5 rounded-full',
               result.status === 'completed' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'
@@ -337,7 +340,27 @@ function AgentCard({ agent, onRun, result, isRunning }: {
 
       <p className="text-xs text-slate-400 mb-3 leading-relaxed">{agent.description}</p>
 
-      {result && (
+      {/* Live trace during execution */}
+      {isRunning && liveSteps.length > 0 && (
+        <div className="border-t border-white/5 pt-3 space-y-1.5">
+          <p className="text-[10px] text-blue-400 uppercase tracking-wider font-medium flex items-center gap-1">
+            <Activity className="w-3 h-3" /> Live Trace
+          </p>
+          {liveSteps.map((s, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2">
+              <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+              <span className="text-[10px] text-slate-400">{s}</span>
+            </motion.div>
+          ))}
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-3 h-3 text-blue-400 animate-spin shrink-0" />
+            <span className="text-[10px] text-blue-400">Processing next step...</span>
+          </div>
+        </div>
+      )}
+
+      {result && !isRunning && (
         <div className="border-t border-white/5 pt-3">
           <button
             onClick={() => setExpanded(!expanded)}
@@ -355,9 +378,7 @@ function AgentCard({ agent, onRun, result, isRunning }: {
                 className="overflow-hidden"
               >
                 <div className="mt-3 space-y-3">
-                  {/* Rich result display */}
                   <AgentResultDisplay agentId={agent.agent_id} result={(result.result ?? {}) as Record<string, unknown>} />
-                  {/* Reasoning chain */}
                   <div className="space-y-1.5">
                     <p className="text-xs text-slate-500 font-medium">Reasoning Chain:</p>
                     {result.reasoning_chain?.map((step, i) => (
@@ -367,7 +388,6 @@ function AgentCard({ agent, onRun, result, isRunning }: {
                       </div>
                     ))}
                   </div>
-                  {/* Tools called */}
                   {result.tools_called?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {result.tools_called.map((tool, i) => (
@@ -388,14 +408,21 @@ function AgentCard({ agent, onRun, result, isRunning }: {
 }
 
 export function AgentConsolePage() {
+  const qc = useQueryClient()
+  const { sessions, chatHistory: persistedChat, sessionId, addSession, clearSessions, addChatMessage, clearChat } = useAgentSessionStore()
   const [chatInput, setChatInput] = useState('')
-  const [chatHistory, setChatHistory] = useState<{ role: string; content: string; metadata?: unknown }[]>([])
+  const [chatHistory, setChatHistory] = useState<{ role: string; content: string; metadata?: unknown }[]>(
+    persistedChat.map(m => ({ role: m.role, content: m.content, metadata: m.metadata }))
+  )
   const [runningAgents, setRunningAgents] = useState<Set<string>>(new Set())
   const [agentResults, setAgentResults] = useState<Record<string, AgentResult>>({})
+  const [liveTrace, setLiveTrace] = useState<Record<string, string[]>>({})
   const [tierFilter, setTierFilter] = useState('All')
+  const [rightTab, setRightTab] = useState<'chat' | 'observability'>('chat')
   const [selectedCountry, setSelectedCountry] = useState('')
   const [selectedState, setSelectedState] = useState('')
   const [selectedCity, setSelectedCity] = useState('')
+  const chatEndRef = useRef<HTMLDivElement>(null)
 
   const countries = Object.keys(GEO_DATA)
   const states = selectedCountry ? Object.keys(GEO_DATA[selectedCountry]?.states ?? {}) : []
@@ -423,12 +450,35 @@ export function AgentConsolePage() {
   const activeInsight = selectedCity ? CONTEXT_INSIGHTS[selectedCity] : selectedState ? CONTEXT_INSIGHTS[selectedState] : selectedCountry ? CONTEXT_INSIGHTS[selectedCountry] : null
   const activeScope = selectedCity || selectedState || selectedCountry
 
+  // Auto-scroll chat to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [chatHistory])
+
   const { data: fetchedAgents } = useQuery({
     queryKey: ['agents'],
     queryFn: async () => {
       try { return await agentApi.list().then((r) => r.data) }
       catch { return BUILTIN_AGENTS }
     },
+  })
+
+  const { data: observability, refetch: refetchObs } = useQuery({
+    queryKey: ['agents-observability'],
+    queryFn: async () => {
+      try { return await agentApi.observability().then((r) => r.data) }
+      catch { return null }
+    },
+    refetchInterval: 10000,
+  })
+
+  const { data: backendSessions } = useQuery({
+    queryKey: ['agents-sessions'],
+    queryFn: async () => {
+      try { return await agentApi.sessions(50).then((r) => r.data) }
+      catch { return [] }
+    },
+    refetchInterval: 15000,
   })
 
   const agents = (fetchedAgents && fetchedAgents.length > 0 ? fetchedAgents : BUILTIN_AGENTS)
@@ -470,20 +520,49 @@ export function AgentConsolePage() {
 
   const runMutation = useMutation({
     mutationFn: async ({ agentId, context }: { agentId: string; context: Record<string, unknown> }) => {
+      const startedAt = new Date().toISOString()
+      setLiveTrace(prev => ({ ...prev, [agentId]: [] }))
       try {
-        return await agentApi.run(agentId, context).then((r) => r.data)
+        const data = await agentApi.run(agentId, context, sessionId).then((r) => r.data)
+        return { data, startedAt, fromBackend: true }
       } catch {
-        await new Promise(r => setTimeout(r, 900 + Math.random() * 800))
-        return getMockResult(agentId, context)
+        const mock = getMockResult(agentId, context)
+        for (const chainStep of mock.reasoning_chain) {
+          await new Promise(r => setTimeout(r, 280 + Math.random() * 420))
+          setLiveTrace(prev => ({
+            ...prev,
+            [agentId]: [...(prev[agentId] ?? []), chainStep.step],
+          }))
+        }
+        await new Promise(r => setTimeout(r, 200))
+        return { data: mock, startedAt, fromBackend: false }
       }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: ({ data, startedAt }, variables) => {
       setAgentResults((prev) => ({ ...prev, [variables.agentId]: data }))
       setRunningAgents((prev) => { const s = new Set(prev); s.delete(variables.agentId); return s })
-      toast.success(`${variables.agentId.replace(/_/g, ' ')} completed`)
+      setLiveTrace(prev => { const n = { ...prev }; delete n[variables.agentId]; return n })
+      const agentName = BUILTIN_AGENTS.find(a => a.agent_id === variables.agentId)?.name ?? variables.agentId
+      const session: AgentSession = {
+        id: `${variables.agentId}-${Date.now()}`,
+        agentId: variables.agentId,
+        agentName,
+        context: variables.context,
+        result: data,
+        startedAt,
+        completedAt: new Date().toISOString(),
+        latency_ms: data.latency_ms ?? 0,
+        status: data.status === 'completed' ? 'completed' : 'failed',
+        tools_called: data.tools_called ?? [],
+      }
+      addSession(session)
+      qc.invalidateQueries({ queryKey: ['agents-observability'] })
+      qc.invalidateQueries({ queryKey: ['agents-sessions'] })
+      toast.success(`${agentName} completed`)
     },
     onError: (_, variables) => {
       setRunningAgents((prev) => { const s = new Set(prev); s.delete(variables.agentId); return s })
+      setLiveTrace(prev => { const n = { ...prev }; delete n[variables.agentId]; return n })
       toast.error('Agent execution failed')
     },
   })
@@ -494,23 +573,44 @@ export function AgentConsolePage() {
   ]
 
   const chatMutation = useMutation({
-    mutationFn: async ({ message, agentId }: { message: string; agentId: string }) => {
+    mutationFn: async ({ message }: { message: string; agentId: string }) => {
+      // Try backend first
       try {
-        return await agentApi.chat(message, agentId).then((r) => r.data)
+        const data = await agentApi.chat(message, 'decision_agent', sessionId).then(r => r.data)
+        const response = data.response
+          ? (typeof data.response === 'object'
+            ? (data.response as Record<string, unknown>)?.final_recommendation as string ?? JSON.stringify(data.response)
+            : String(data.response))
+          : 'Analysis complete.'
+        return { response }
       } catch {
         await new Promise(r => setTimeout(r, 600 + Math.random() * 800))
-        const respFn = MOCK_CHAT_RESPONSES[Math.floor(Math.random() * MOCK_CHAT_RESPONSES.length)]
-        return { response: respFn(message) }
+        const lm = message.toLowerCase()
+        const response = lm.includes('flood')
+          ? `Flood risk assessment: Brahmaputra at 5.2m (threshold 6.0m), MEDIUM risk. Storm probability 38% over next 72h. NDRF units on standby.`
+          : lm.includes('quality') || lm.includes('water quality')
+          ? `Water quality status: Average WQI 84 across monitored stations. All WHO parameters within safe limits. Turbidity spike at Guwahati (8.4 NTU) — advisory issued for Zone 7.`
+          : lm.includes('reservoir')
+          ? `Reservoir status: 74% average capacity globally. Hirakud Dam at 91.2% — controlled release of 320 m³/s active. Murray-Darling critical at 18.4%.`
+          : lm.includes('leak') || lm.includes('pipeline')
+          ? `Pipeline network: 3 critical sections identified. Nile Delta Network (91% leak probability) and Dhaka Old City Main (94%) flagged for emergency replacement. Total estimated water loss: 5,200 MLD globally.`
+          : lm.includes('sensor')
+          ? `Sensor network: 9/12 monitored sensors online. S008 Murray Critical Level and S011 Dhaka Pipe Pressure in ALERT status. Battery replacement needed for S005 (45%) and S008 (31%) within 30 days.`
+          : lm.includes('climate') || lm.includes('drought')
+          ? `Climate analysis: +1.42°C temperature anomaly above 1990–2020 baseline. Freshwater availability projected -8.2% by 2035. Drought index 0.38 — moderate stress.`
+          : `Decision Agent: cross-referencing rainfall (112mm/7day, +18% anomaly), reservoir levels (74% avg), and infrastructure status (3 critical pipe sections). Current system status: NOMINAL. Select a geographic context above and run specific agents for detailed analysis.`
+        return { response }
       }
     },
     onSuccess: (data) => {
-      setChatHistory((prev) => [...prev, {
+      const ts = new Date().toISOString()
+      const msg = {
         role: 'assistant',
-        content: typeof data.response === 'object'
-          ? (data.response as Record<string, unknown>)?.final_recommendation as string ?? JSON.stringify(data.response)
-          : String(data.response),
+        content: data.response,
         metadata: data,
-      }])
+      }
+      setChatHistory((prev) => [...prev, msg])
+      addChatMessage({ ...msg, timestamp: ts })
     },
   })
 
@@ -522,9 +622,21 @@ export function AgentConsolePage() {
   const handleChat = () => {
     if (!chatInput.trim()) return
     const contextPrefix = selectedCountry ? `[Context: ${[selectedCountry, selectedState, selectedCity].filter(Boolean).join(' › ')}] ` : ''
-    setChatHistory((prev) => [...prev, { role: 'user', content: chatInput }])
+    const userMsg = { role: 'user', content: chatInput }
+    setChatHistory((prev) => [...prev, userMsg])
+    addChatMessage({ ...userMsg, timestamp: new Date().toISOString() })
     chatMutation.mutate({ message: contextPrefix + chatInput, agentId: 'decision_agent' })
     setChatInput('')
+  }
+
+  const handleClearSessions = async () => {
+    clearSessions()
+    clearChat()
+    setChatHistory([])
+    try { await agentApi.clearSessions() } catch { /* offline */ }
+    qc.invalidateQueries({ queryKey: ['agents-observability'] })
+    qc.invalidateQueries({ queryKey: ['agents-sessions'] })
+    toast.success('Sessions cleared')
   }
 
   return (
@@ -718,70 +830,224 @@ export function AgentConsolePage() {
                 onRun={() => handleRunAgent(agent.agent_id)}
                 result={agentResults[agent.agent_id]}
                 isRunning={runningAgents.has(agent.agent_id)}
+                liveSteps={liveTrace[agent.agent_id] ?? []}
               />
             ))}
           </div>
         </div>
 
-        {/* Chat Panel */}
+        {/* Right Panel: Chat + Observability */}
         <GlassCard className="flex flex-col h-[600px] p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
-              <Brain className="w-4 h-4 text-purple-400" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-white">Decision Agent Chat</h3>
-              <p className="text-xs text-slate-500">Ask anything about water systems</p>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto space-y-3 mb-4">
-            {chatHistory.length === 0 && (
-              <div className="text-center text-xs text-slate-600 mt-8">
-                <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                <p>Ask the Decision Agent about</p>
-                <p>flood risk, reservoir status, water quality...</p>
-              </div>
-            )}
-            {chatHistory.map((msg, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={cn(
-                  'rounded-xl px-3 py-2.5 text-xs leading-relaxed max-w-[90%]',
-                  msg.role === 'user'
-                    ? 'bg-blue-600/20 text-blue-200 ml-auto'
-                    : 'bg-white/5 text-slate-300'
-                )}
-              >
-                {msg.content}
-              </motion.div>
-            ))}
-            {chatMutation.isPending && (
-              <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2.5 w-fit">
-                <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
-                <span className="text-xs text-slate-400">Reasoning...</span>
-              </div>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleChat()}
-              placeholder="Ask about water conditions..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/50"
-            />
+          {/* Tab Bar */}
+          <div className="flex items-center gap-1 mb-4 bg-white/3 rounded-xl p-1">
             <button
-              onClick={handleChat}
-              disabled={chatMutation.isPending || !chatInput.trim()}
-              className="p-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 rounded-xl text-blue-400 disabled:opacity-50 transition-colors"
+              onClick={() => setRightTab('chat')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                rightTab === 'chat' ? 'bg-purple-600/20 text-purple-300 border border-purple-500/20' : 'text-slate-500 hover:text-slate-300'
+              )}
             >
-              <Send className="w-4 h-4" />
+              <MessageSquare className="w-3 h-3" /> Chat
+            </button>
+            <button
+              onClick={() => { setRightTab('observability'); refetchObs() }}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                rightTab === 'observability' ? 'bg-blue-600/20 text-blue-300 border border-blue-500/20' : 'text-slate-500 hover:text-slate-300'
+              )}
+            >
+              <Activity className="w-3 h-3" /> Observability
             </button>
           </div>
+
+          {/* Chat Tab */}
+          {rightTab === 'chat' && (
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                  <Brain className="w-3.5 h-3.5 text-purple-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xs font-semibold text-white">Decision Agent Chat</h3>
+                  <p className="text-[10px] text-slate-500">Ask about water systems</p>
+                </div>
+                {chatHistory.length > 0 && (
+                  <button onClick={() => { setChatHistory([]); clearChat() }}
+                    className="text-[10px] text-slate-600 hover:text-red-400 transition-colors flex items-center gap-1">
+                    <Trash2 className="w-3 h-3" /> Clear
+                  </button>
+                )}
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-3 mb-3">
+                {chatHistory.length === 0 && (
+                  <div className="text-center text-xs text-slate-600 mt-8">
+                    <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                    <p>Ask the Decision Agent about</p>
+                    <p className="text-slate-700">flood risk, reservoirs, water quality...</p>
+                  </div>
+                )}
+                {chatHistory.map((msg, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className={cn(
+                      'rounded-xl px-3 py-2.5 text-xs leading-relaxed max-w-[90%]',
+                      msg.role === 'user' ? 'bg-blue-600/20 text-blue-200 ml-auto' : 'bg-white/5 text-slate-300'
+                    )}
+                  >
+                    {msg.content}
+                  </motion.div>
+                ))}
+                {chatMutation.isPending && (
+                  <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2.5 w-fit">
+                    <Loader2 className="w-3 h-3 animate-spin text-purple-400" />
+                    <span className="text-xs text-slate-400">Reasoning...</span>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleChat()}
+                  placeholder="Ask about water conditions..."
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500/50"
+                />
+                <button onClick={handleChat} disabled={chatMutation.isPending || !chatInput.trim()}
+                  className="p-2 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 rounded-xl text-blue-400 disabled:opacity-50 transition-colors">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Observability Tab */}
+          {rightTab === 'observability' && (
+            <div className="flex-1 overflow-y-auto space-y-4">
+              {/* Stats row */}
+              {(() => {
+                const allSessions = (backendSessions ?? []).length > 0 ? backendSessions : sessions
+                const total = observability?.total_runs ?? allSessions.length
+                const avgLatency = observability?.avg_latency_ms ?? (allSessions.length > 0
+                  ? Math.round(allSessions.reduce((s: number, r: AgentSession) => s + (r.latency_ms ?? 0), 0) / allSessions.length)
+                  : 0)
+                const successRate = observability?.success_rate ?? (total > 0
+                  ? Math.round(allSessions.filter((s: AgentSession) => s.status === 'completed').length / Math.max(allSessions.length, 1) * 100)
+                  : 0)
+                const toolsUsed = observability
+                  ? allSessions.reduce((acc: number, s: AgentSession) => acc + (s.tools_called?.length ?? 0), 0)
+                  : sessions.reduce((acc, s) => acc + (s.tools_called?.length ?? 0), 0)
+                return (
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { label: 'Total Runs', value: total, icon: <Activity className="w-3 h-3" />, color: 'text-blue-400' },
+                      { label: 'Avg Latency', value: `${avgLatency}ms`, icon: <Clock className="w-3 h-3" />, color: 'text-cyan-400' },
+                      { label: 'Success Rate', value: `${successRate}%`, icon: <CheckCircle2 className="w-3 h-3" />, color: 'text-emerald-400' },
+                      { label: 'Tools Called', value: toolsUsed, icon: <Wrench className="w-3 h-3" />, color: 'text-purple-400' },
+                    ].map(({ label, value, icon, color }) => (
+                      <div key={label} className="bg-white/3 rounded-xl p-2.5 border border-white/5">
+                        <div className={cn('flex items-center gap-1 mb-1', color)}>{icon}<span className="text-[10px] uppercase tracking-wider">{label}</span></div>
+                        <p className={cn('text-lg font-bold', color)}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
+
+              {/* Live running agents */}
+              {runningAgents.size > 0 && (
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2 flex items-center gap-1">
+                    <Loader2 className="w-3 h-3 animate-spin text-blue-400" /> Live Execution
+                  </p>
+                  <div className="space-y-2">
+                    {Array.from(runningAgents).map(agentId => {
+                      const steps = liveTrace[agentId] ?? []
+                      const name = BUILTIN_AGENTS.find(a => a.agent_id === agentId)?.name ?? agentId
+                      return (
+                        <div key={agentId} className="bg-blue-500/5 border border-blue-500/15 rounded-xl p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                            <span className="text-xs text-blue-300 font-medium">{name}</span>
+                            <span className="text-[10px] text-slate-500">running...</span>
+                          </div>
+                          {steps.map((s, i) => (
+                            <div key={i} className="flex items-center gap-2 mt-1">
+                              <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                              <span className="text-[10px] text-slate-400">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Execution Timeline */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium flex items-center gap-1">
+                    <Database className="w-3 h-3" /> Session History
+                    <span className="ml-1 text-blue-400">{(backendSessions ?? []).length > 0 ? '(backend)' : '(local)'}</span>
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { refetchObs(); qc.invalidateQueries({ queryKey: ['agents-sessions'] }) }}
+                      className="text-slate-600 hover:text-slate-300 transition-colors">
+                      <RefreshCw className="w-3 h-3" />
+                    </button>
+                    <button onClick={handleClearSessions}
+                      className="text-slate-600 hover:text-red-400 transition-colors ml-1">
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {((backendSessions ?? []).length > 0 ? backendSessions : sessions).slice(0, 20).map((s: AgentSession, i: number) => (
+                    <div key={s.id ?? i} className="flex items-center gap-2 p-2 bg-white/3 rounded-lg border border-white/5">
+                      {s.status === 'completed'
+                        ? <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                        : <XCircle className="w-3 h-3 text-red-400 shrink-0" />}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] text-white font-medium truncate">{s.agentName}</p>
+                        <p className="text-[9px] text-slate-500">{s.latency_ms}ms · {new Date(s.startedAt ?? s.completedAt).toLocaleTimeString()}</p>
+                      </div>
+                      {(s.tools_called?.length ?? 0) > 0 && (
+                        <span className="text-[9px] text-purple-400 bg-purple-500/10 rounded px-1.5 py-0.5 shrink-0">{s.tools_called.length} tools</span>
+                      )}
+                    </div>
+                  ))}
+                  {((backendSessions ?? []).length === 0 && sessions.length === 0) && (
+                    <p className="text-[10px] text-slate-600 text-center py-4">No runs yet — click Run on any agent</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Per-agent stats from backend */}
+              {observability?.per_agent?.length > 0 && (
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider font-medium mb-2">Agent Performance</p>
+                  <div className="space-y-1.5">
+                    {observability.per_agent.slice(0, 5).map((a: { agent_id: string; agent_name: string; runs: number; avg_latency_ms: number; avg_confidence: number }) => (
+                      <div key={a.agent_id} className="flex items-center gap-2 p-2 bg-white/3 rounded-lg">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] text-white truncate">{a.agent_name}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(a.avg_confidence ?? 0) * 100}%` }} />
+                            </div>
+                            <span className="text-[9px] text-slate-500">{a.runs}x</span>
+                          </div>
+                        </div>
+                        <span className="text-[9px] text-cyan-400 shrink-0">{a.avg_latency_ms}ms</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </GlassCard>
       </div>
     </div>
