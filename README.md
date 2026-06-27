@@ -92,9 +92,15 @@
 |--------------------------------------------------|------------------------------------------|
 | ![Reasoning Chain](demo/screenshots/13e-agents-reasoning-chain.png) | ![Decision Agent](demo/screenshots/13h-decision-agent-result.png) |
 
-| Observability Panel — Session History + Metrics | Decision Agent Running — A2A Invocations |
+| Observability Tab — Session History + Metrics | Decision Agent Running — A2A Invocations |
 |------------------------------------------------|------------------------------------------|
-| ![Observability](demo/screenshots/13f-agents-observability.png) | ![Decision Running](demo/screenshots/13g-decision-agent-running.png) |
+| ![Observability Tab](demo/screenshots/13f-agents-observability.png) | ![Decision Running](demo/screenshots/13g-decision-agent-running.png) |
+
+**Dedicated Observability Dashboard** (`/observability`) — Live agent status, execution timeline, tool analytics, agent memory browser, per-agent performance
+
+| Agent Observability — Stats + Live Status + Timeline | Per-Agent Performance + Memory Browser |
+|------------------------------------------------------|----------------------------------------|
+| ![Observability](demo/screenshots/21-observability.png) | ![Observability Performance](demo/screenshots/21b-observability-performance.png) |
 
 ---
 
