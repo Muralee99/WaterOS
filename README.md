@@ -126,6 +126,8 @@
 
 ## ðŸ— Architecture
 
+> 📐 **[View Full Interactive Architecture Diagram](./docs/architecture-diagram.md)** — Mermaid flowchart with all data sources, storage, MCP, governed agents, A2A topology, and action outputs
+
 ```
 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
 â”‚                         PRESENTATION LAYER                               â”‚
