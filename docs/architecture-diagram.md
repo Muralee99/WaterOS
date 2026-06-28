@@ -1,6 +1,6 @@
 ## System Architecture Diagram
 
-![WaterOS Full Architecture](architecture.png)
+![WaterOS Full Architecture](../demo/architecture/architecture.png)
 
 ---
 # WaterOS — Full System Architecture Diagram
