@@ -1,3 +1,8 @@
+## System Architecture Diagram
+
+![WaterOS Full Architecture](architecture.png)
+
+---
 # WaterOS — Full System Architecture Diagram
 
 > End-to-end data flow: from raw sources → ingestion → storage → MCP → governed agents → decisions → actions
