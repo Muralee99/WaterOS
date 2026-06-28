@@ -1,6 +1,6 @@
-/**
+﻿/**
  * WaterOS Demo Video Generator
- * 1920x1080 · H.264 · YouTube-ready · Ken Burns + crossfade
+ * 1920x1080 Â· H.264 Â· YouTube-ready Â· Ken Burns + crossfade
  */
 
 import { execSync } from 'child_process'
@@ -23,11 +23,11 @@ function run(cmd, label) {
   execSync(cmd, { stdio: 'pipe' })
 }
 
-// ── Sequence ──────────────────────────────────────────────────────────────────
+// â”€â”€ Sequence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SEQ = [
   // Intro
   { type: 'title', title: 'WaterOS',               sub: 'AI-Native Multi-Agent Water Intelligence Platform',        dur: 4 },
-  { type: 'title', title: 'Google AI Hackathon 2025', sub: 'Google ADK   Gemini 1.5 Pro   14 Autonomous Agents',   dur: 3 },
+  { type: 'title', title: 'Google AI Hackathon 2026', sub: 'Google ADK   Gemini 1.5 Pro   14 Autonomous Agents',   dur: 3 },
 
   // Platform
   { type: 'title', title: 'The Platform',           sub: 'A complete water intelligence nerve center',               dur: 2 },
@@ -82,10 +82,10 @@ const SEQ = [
 
   // Outro
   { type: 'title', title: 'WaterOS',               sub: '4 billion people. Real-time crises. Real-time intelligence.', dur: 4 },
-  { type: 'title', title: 'github.com/Muralee99/WaterOS', sub: 'Google AI Hackathon 2025',                          dur: 5 },
+  { type: 'title', title: 'github.com/Muralee99/WaterOS', sub: 'Google AI Hackathon 2026',                          dur: 5 },
 ]
 
-// ── Title clip ────────────────────────────────────────────────────────────────
+// â”€â”€ Title clip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function titleClip(title, sub, dur, out) {
   const fps = 30
   const fi = 0.5   // fade-in duration
@@ -102,7 +102,7 @@ function titleClip(title, sub, dur, out) {
   )
 }
 
-// ── Slide clip (Ken Burns) ────────────────────────────────────────────────────
+// â”€â”€ Slide clip (Ken Burns) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function slideClip(imgPath, dur, zoom, out) {
   const fps = 30
   const d   = dur * fps
@@ -134,7 +134,7 @@ function slideClip(imgPath, dur, zoom, out) {
   )
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 console.log('\n WaterOS Demo Video Generator')
 console.log('================================\n')
 
@@ -191,3 +191,4 @@ console.log(`\n Video ready: demo/wateros-demo.mp4`)
 console.log(`   Size: ${size}MB  |  Duration: ${(totalDur / 60).toFixed(2)} min`)
 console.log(`\n Add voiceover (optional):`)
 console.log(`   ffmpeg -i demo/wateros-demo.mp4 -i voiceover.mp3 -c:v copy -c:a aac -shortest demo/wateros-demo-final.mp4`)
+

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Globe, Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -80,7 +80,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-11 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500/60 transition-colors"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   required
                 />
                 <button
@@ -113,9 +113,10 @@ export function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-slate-600 mt-6">
-          Google AI Hackathon 2025 · WaterOS v1.0
+          Google AI Hackathon 2026 Â· WaterOS v1.0
         </p>
       </motion.div>
     </div>
   )
 }
+

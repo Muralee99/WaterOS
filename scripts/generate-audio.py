@@ -1,4 +1,4 @@
-"""
+﻿"""
 WaterOS Demo Audio Generator
 Uses Microsoft Edge TTS (free, no API key, neural voices)
 Produces: demo/voiceover.mp3
@@ -13,13 +13,13 @@ import asyncio
 import edge_tts
 import os
 
-# ── Voice selection ────────────────────────────────────────────────────────────
+# â”€â”€ Voice selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Options (all free Microsoft neural voices):
-#   en-US-AndrewMultilingualNeural  — deep, authoritative male (best for tech demos)
-#   en-US-BrianMultilingualNeural   — warm, confident male
-#   en-US-EmmaMultilingualNeural    — clear, professional female
-#   en-US-AvaMultilingualNeural     — friendly, expressive female
-#   en-GB-RyanNeural                — British male, polished
+#   en-US-AndrewMultilingualNeural  â€” deep, authoritative male (best for tech demos)
+#   en-US-BrianMultilingualNeural   â€” warm, confident male
+#   en-US-EmmaMultilingualNeural    â€” clear, professional female
+#   en-US-AvaMultilingualNeural     â€” friendly, expressive female
+#   en-GB-RyanNeural                â€” British male, polished
 VOICE = "en-US-AndrewMultilingualNeural"
 
 # Speech rate: +0% normal, -10% slightly slower (better for technical content)
@@ -32,18 +32,18 @@ OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "demo")
 OUT_MP3 = os.path.join(OUT_DIR, "voiceover.mp3")
 OUT_SRT = os.path.join(OUT_DIR, "voiceover.srt")
 
-# ── Narration ─────────────────────────────────────────────────────────────────
+# â”€â”€ Narration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Timed to the 2m57s demo video.
 # SSML pauses <break time="Xs"/> control exact sync with video cuts.
 NARRATION = """
-Water stress affects 4 billion people — nearly half of humanity.
+Water stress affects 4 billion people â€” nearly half of humanity.
 <break time="0.6s"/>
 WaterOS is an AI-native, multi-agent water intelligence platform
-built for the Google AI Hackathon 2025.
+built for the Google AI Hackathon 2026.
 <break time="0.8s"/>
 
 Under the hood, WaterOS runs 14 specialized autonomous agents,
-each built on Google's Agent Development Kit — ADK —
+each built on Google's Agent Development Kit â€” ADK â€”
 and powered by Gemini 1.5 Pro.
 <break time="0.4s"/>
 These agents don't just retrieve data.
@@ -51,20 +51,20 @@ They reason, collaborate, and act.
 <break time="0.9s"/>
 
 The platform opens with a secure JSON Web Token authenticated session.
-The real-time dashboard surfaces global KPIs —
-Water Quality Index, flood risk scores, reservoir capacity, and pipeline pressure —
+The real-time dashboard surfaces global KPIs â€”
+Water Quality Index, flood risk scores, reservoir capacity, and pipeline pressure â€”
 alongside a live AI inference feed where agents stream their findings directly to the UI.
 <break time="0.7s"/>
 
-The Global Intelligence view ingests data from 195 countries —
-satellite feeds, IoT sensors, hydrological APIs, and climate models —
+The Global Intelligence view ingests data from 195 countries â€”
+satellite feeds, IoT sensors, hydrological APIs, and climate models â€”
 running continuous anomaly detection to flag emerging crises before they escalate.
 <break time="0.8s"/>
 
-Geographic Intelligence gives you full drill-down —
+Geographic Intelligence gives you full drill-down â€”
 global to country, state, city, and basin level.
 <break time="0.4s"/>
-Click any country, and the Country Agent fires instantly —
+Click any country, and the Country Agent fires instantly â€”
 aggregating multi-source data and generating an AI risk assessment
 using Gemini's 1-million-token context window.
 <break time="0.8s"/>
@@ -80,7 +80,7 @@ Pipeline networks run continuous leak detection using acoustic pressure analysis
 Reservoir monitoring tracks real-time inflow, outflow, and overflow risk.
 <break time="0.9s"/>
 
-Here is where WaterOS goes beyond dashboards —
+Here is where WaterOS goes beyond dashboards â€”
 14 autonomous AI agents, each a specialist.
 <break time="0.4s"/>
 The Flood Agent. Rainfall Agent. Reservoir Agent.
@@ -92,20 +92,20 @@ Sensor Intelligence. And Report Generation Agent.
 
 Every agent runs on Google ADK's multi-turn reasoning loop.
 <break time="0.4s"/>
-Select a geographic scope — here, India, Assam —
+Select a geographic scope â€” here, India, Assam â€”
 and fire the Flood Agent.
 <break time="0.8s"/>
 
 Watch the live step trace animate in real time.
 <break time="0.4s"/>
 The agent loads episodic memory from prior runs stored in PostgreSQL,
-then calls Model Context Protocol tools —
-predictFloodCrest, calculateDischarge, detectAnomalies —
+then calls Model Context Protocol tools â€”
+predictFloodCrest, calculateDischarge, detectAnomalies â€”
 builds a multi-step reasoning chain,
 and returns a structured result with confidence score and latency metrics.
 <break time="0.9s"/>
 
-This is Agent-to-Agent protocol — A2A.
+This is Agent-to-Agent protocol â€” A2A.
 <break time="0.4s"/>
 The Decision Agent acts as orchestrator.
 It invokes the Emergency, Rainfall, and Reservoir agents as sub-agents,
@@ -121,7 +121,7 @@ The Observability Dashboard shows live agent status via WebSocket,
 execution timelines across all 14 agents,
 per-agent latency and confidence performance bars,
 tool call frequency analytics,
-and an Agent Memory Browser —
+and an Agent Memory Browser â€”
 showing the episodic memories each agent carries forward between runs.
 <break time="0.5s"/>
 Sessions persist in both PostgreSQL and browser local storage via Zustand.
@@ -171,7 +171,7 @@ async def main():
             audio_chunks.append(chunk["data"])
         elif chunk["type"] == "WordBoundary":
             subs.append({
-                "start": chunk["offset"] / 10_000_000,   # 100-ns → seconds
+                "start": chunk["offset"] / 10_000_000,   # 100-ns â†’ seconds
                 "end":   (chunk["offset"] + chunk["duration"]) / 10_000_000,
                 "word":  chunk["text"],
             })
@@ -212,3 +212,4 @@ async def main():
 
 
 asyncio.run(main())
+

@@ -1,10 +1,10 @@
-<div align="center">
+﻿<div align="center">
 
-# 💧 WaterOS
+# ðŸ’§ WaterOS
 
 ### AI-Native Multi-Agent Water Intelligence Platform
 
-*Google AI Hackathon 2025*
+*Google AI Hackathon 2026*
 
 [![Google ADK](https://img.shields.io/badge/Google%20ADK-Powered-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://google.com)
 [![Gemini 1.5 Pro](https://img.shields.io/badge/Gemini%201.5%20Pro-AI%20Engine-8B5CF6?style=for-the-badge&logo=google&logoColor=white)](https://deepmind.google/gemini)
@@ -15,44 +15,44 @@
 
 <br/>
 
-> **WaterOS** is an enterprise-grade, AI-first platform that deploys 14 autonomous agents to monitor, predict, optimize, and protect global water resources in real time. It demonstrates multi-agent orchestration, agent memory, live observability, MCP tooling, and explainable AI — applied to one of humanity's most critical challenges.
+> **WaterOS** is an enterprise-grade, AI-first platform that deploys 14 autonomous agents to monitor, predict, optimize, and protect global water resources in real time. It demonstrates multi-agent orchestration, agent memory, live observability, MCP tooling, and explainable AI â€” applied to one of humanity's most critical challenges.
 
 <br/>
 
-[![Live App](https://img.shields.io/badge/▶%20Live%20App-localhost%3A3000-22c55e?style=for-the-badge)](http://localhost:3000)
-[![API Docs](https://img.shields.io/badge/📖%20API%20Docs-localhost%3A8000%2Fdocs-f59e0b?style=for-the-badge)](http://localhost:8000/docs)
-[![Architecture](https://img.shields.io/badge/🏗%20Architecture-docs%2Farchitecture.md-6366f1?style=for-the-badge)](./docs/architecture.md)
+[![Live App](https://img.shields.io/badge/â–¶%20Live%20App-localhost%3A3000-22c55e?style=for-the-badge)](http://localhost:3000)
+[![API Docs](https://img.shields.io/badge/ðŸ“–%20API%20Docs-localhost%3A8000%2Fdocs-f59e0b?style=for-the-badge)](http://localhost:8000/docs)
+[![Architecture](https://img.shields.io/badge/ðŸ—%20Architecture-docs%2Farchitecture.md-6366f1?style=for-the-badge)](./docs/architecture.md)
 
 </div>
 
 ---
 
-## ✨ What Makes WaterOS Different
+## âœ¨ What Makes WaterOS Different
 
 | Capability | Description |
 |-----------|-------------|
-| 🤖 **14 Autonomous AI Agents** | Specialized agents for flood, rainfall, reservoir, quality, leaks, climate, emergency, and more — all powered by Gemini 1.5 Pro |
-| 🧠 **Agent Memory** | Episodic memory stored in PostgreSQL — agents remember past runs and enrich future analysis with historical context |
-| 🔍 **Live Observability** | Real-time execution traces, reasoning step animation, session history, per-agent performance metrics |
-| 🔗 **Agent-to-Agent Communication** | Agents invoke each other in chains (e.g., Decision Agent orchestrates Flood + Reservoir + Quality agents) |
-| 🛠 **MCP Server** | 8 standardized Model Context Protocol tools for water system interaction |
-| 🌐 **Global → City Drill-Down** | Hierarchical intelligence: Global → Country → State → City with scoped AI insights at every level |
-| 📡 **Real-time WebSocket Streams** | Live sensor telemetry and agent status pushed every 3–5 seconds |
-| 🧬 **Digital Twin** | Simulate flood, drought, and contamination scenarios with what-if analysis |
-| 📊 **Explainable AI** | Every recommendation shows the full reasoning chain, confidence score, tools called, and agents invoked |
-| 🔒 **Production-Ready** | JWT auth, RBAC, Kafka event streaming, Redis caching, Qdrant vector search |
+| ðŸ¤– **14 Autonomous AI Agents** | Specialized agents for flood, rainfall, reservoir, quality, leaks, climate, emergency, and more â€” all powered by Gemini 1.5 Pro |
+| ðŸ§  **Agent Memory** | Episodic memory stored in PostgreSQL â€” agents remember past runs and enrich future analysis with historical context |
+| ðŸ” **Live Observability** | Real-time execution traces, reasoning step animation, session history, per-agent performance metrics |
+| ðŸ”— **Agent-to-Agent Communication** | Agents invoke each other in chains (e.g., Decision Agent orchestrates Flood + Reservoir + Quality agents) |
+| ðŸ›  **MCP Server** | 8 standardized Model Context Protocol tools for water system interaction |
+| ðŸŒ **Global â†’ City Drill-Down** | Hierarchical intelligence: Global â†’ Country â†’ State â†’ City with scoped AI insights at every level |
+| ðŸ“¡ **Real-time WebSocket Streams** | Live sensor telemetry and agent status pushed every 3â€“5 seconds |
+| ðŸ§¬ **Digital Twin** | Simulate flood, drought, and contamination scenarios with what-if analysis |
+| ðŸ“Š **Explainable AI** | Every recommendation shows the full reasoning chain, confidence score, tools called, and agents invoked |
+| ðŸ”’ **Production-Ready** | JWT auth, RBAC, Kafka event streaming, Redis caching, Qdrant vector search |
 
 ---
 
-## 🖥 Screenshots
+## ðŸ–¥ Screenshots
 
 ### Platform Overview
 
-| Login | Dashboard — Water Intelligence KPIs |
+| Login | Dashboard â€” Water Intelligence KPIs |
 |-------|--------------------------------------|
 | ![Login](demo/screenshots/01-login.png) | ![Dashboard](demo/screenshots/02-dashboard.png) |
 
-| Global Intelligence — 195 Countries | Alerts & Incidents |
+| Global Intelligence â€” 195 Countries | Alerts & Incidents |
 |--------------------------------------|-------------------|
 | ![Global](demo/screenshots/03-global.png) | ![Alerts](demo/screenshots/17-alerts.png) |
 
@@ -60,7 +60,7 @@
 
 ### Geographic Intelligence
 
-| Countries — Table View | Countries — AI Insights Panel (India selected) |
+| Countries â€” Table View | Countries â€” AI Insights Panel (India selected) |
 |------------------------|------------------------------------------------|
 | ![Countries](demo/screenshots/04-countries.png) | ![Countries AI](demo/screenshots/04b-countries-ai-insights.png) |
 
@@ -78,27 +78,27 @@
 
 ---
 
-### 🤖 Agentic Flows — Core Differentiator
+### ðŸ¤– Agentic Flows â€” Core Differentiator
 
-| Agent Console — 14 Agents Overview | Geographic Context Selected (India → Assam) |
+| Agent Console â€” 14 Agents Overview | Geographic Context Selected (India â†’ Assam) |
 |------------------------------------|---------------------------------------------|
 | ![Agents Overview](demo/screenshots/13-agents-overview.png) | ![Agents Geo](demo/screenshots/13b-agents-geo-context.png) |
 
-| Flood Agent — Live Step Trace (mid-execution) | Flood Agent — Full Result with Reasoning Chain |
+| Flood Agent â€” Live Step Trace (mid-execution) | Flood Agent â€” Full Result with Reasoning Chain |
 |------------------------------------------------|------------------------------------------------|
 | ![Live Trace](demo/screenshots/13c-agents-live-trace.png) | ![Agent Result](demo/screenshots/13d-agents-result.png) |
 
-| Reasoning Chain Expanded — Step-by-Step Evidence | Decision Agent — A2A Orchestration Result |
+| Reasoning Chain Expanded â€” Step-by-Step Evidence | Decision Agent â€” A2A Orchestration Result |
 |--------------------------------------------------|------------------------------------------|
 | ![Reasoning Chain](demo/screenshots/13e-agents-reasoning-chain.png) | ![Decision Agent](demo/screenshots/13h-decision-agent-result.png) |
 
-| Observability Tab — Session History + Metrics | Decision Agent Running — A2A Invocations |
+| Observability Tab â€” Session History + Metrics | Decision Agent Running â€” A2A Invocations |
 |------------------------------------------------|------------------------------------------|
 | ![Observability Tab](demo/screenshots/13f-agents-observability.png) | ![Decision Running](demo/screenshots/13g-decision-agent-running.png) |
 
-**Dedicated Observability Dashboard** (`/observability`) — Live agent status, execution timeline, tool analytics, agent memory browser, per-agent performance
+**Dedicated Observability Dashboard** (`/observability`) â€” Live agent status, execution timeline, tool analytics, agent memory browser, per-agent performance
 
-| Agent Observability — Stats + Live Status + Timeline | Per-Agent Performance + Memory Browser |
+| Agent Observability â€” Stats + Live Status + Timeline | Per-Agent Performance + Memory Browser |
 |------------------------------------------------------|----------------------------------------|
 | ![Observability](demo/screenshots/21-observability.png) | ![Observability Performance](demo/screenshots/21b-observability-performance.png) |
 
@@ -110,7 +110,7 @@
 |-----------------|----------------|
 | ![Climate](demo/screenshots/11-climate.png) | ![Forecast](demo/screenshots/12-forecast.png) |
 
-| Agent Workflow — A2A Visualization | Knowledge Graph — Semantic Network |
+| Agent Workflow â€” A2A Visualization | Knowledge Graph â€” Semantic Network |
 |------------------------------------|-----------------------------------|
 | ![Workflow](demo/screenshots/14-workflow.png) | ![Knowledge Graph](demo/screenshots/15-knowledge-graph.png) |
 
@@ -124,106 +124,106 @@
 
 ---
 
-## 🏗 Architecture
+## ðŸ— Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         PRESENTATION LAYER                               │
-│  React 19 + TypeScript + Vite  ·  Zustand  ·  React Query  ·  :3000     │
-│                                                                          │
-│  Dashboard · Map · Countries · Rivers · Pipelines · Sensors · Cities    │
-│  Water Quality · Climate · Forecast · Alerts · Reports · Settings       │
-│                                                                          │
-│  ┌─────────────────────┐  ┌───────────────────┐  ┌──────────────────┐   │
-│  │  Agent Console       │  │  Observability    │  │  Knowledge Graph │   │
-│  │  14 AI agents        │  │  Session history  │  │  Digital Twin    │   │
-│  │  Live step trace     │  │  Live metrics     │  │  Workflow viz    │   │
-│  │  Decision Agent chat │  │  Agent memory     │  │  Reports         │   │
-│  └─────────────────────┘  └───────────────────┘  └──────────────────┘   │
-└────────────────────────────────┬────────────────────────────────────────┘
-                                 │  REST + WebSocket
-                                 ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                            API LAYER  ·  FastAPI  ·  :8000               │
-│  JWT Auth · CORS · GZip · Async SQLAlchemy · Pydantic v2                │
-│                                                                          │
-│  /auth  /dashboard  /countries  /states  /cities  /rivers               │
-│  /reservoirs  /pipelines  /sensors  /water-quality  /climate            │
-│  /forecast  /alerts  /reports  /simulation  /graph  /mcp                │
-│                                                                          │
-│  ┌─────────────────────────────────────────────────────────────────┐    │
-│  │  /agents — Session + Memory + Observability                      │    │
-│  │  POST /run     → execute + save AgentExecution + write memory    │    │
-│  │  POST /chat    → Decision Agent chat + persist to DB             │    │
-│  │  GET  /sessions       → full run history from PostgreSQL         │    │
-│  │  GET  /observability  → aggregate stats + per-agent metrics      │    │
-│  │  GET  /memory/{id}    → episodic memories per agent              │    │
-│  └─────────────────────────────────────────────────────────────────┘    │
-│                                                                          │
-│  WS /ws/live-data  (sensor telemetry, 5s)                               │
-│  WS /ws/agents     (agent status stream, 3s)                            │
-└──────┬──────────────────────────────────────────┬────────────────────────┘
-       │                                          │
-       ▼                                          ▼
-┌──────────────────────────┐         ┌────────────────────────────────────┐
-│   AI AGENT LAYER          │         │         DATA LAYER                 │
-│   Google ADK + Gemini     │         │                                    │
-│                           │         │  PostgreSQL :5432                  │
-│   Rainfall Agent          │         │  · Countries, rivers, sensors      │
-│   Reservoir Agent         │         │  · AgentExecution (session hist)   │
-│   Flood Agent             │         │  · AgentMemory (episodic memory)   │
-│   Water Quality Agent     │         │  · Users, alerts, reports          │
-│   Leak Detection Agent    │         │                                    │
-│   Climate Agent           │         │  Redis :6379                       │
-│   Emergency Agent         │         │  · Auth token cache                │
-│   Country Agent           │         │  · Agent state, pub/sub            │
-│   Groundwater Agent       │         │                                    │
-│   Decision Agent ──────── │──────── │  Qdrant :6333                      │
-│   Global Coordinator      │ invokes │  · Vector embeddings               │
-│   Infrastructure Agent    │ agents  │  · Semantic knowledge search       │
-│   Sensor Intelligence     │         │                                    │
-│   Report Generation       │         │  Kafka + Zookeeper :9092           │
-│                           │         │  · Sensor telemetry streams        │
-│   Celery Workers          │         │  · Agent result events             │
-│   (async task queue)      │         │  · Alert broadcasting              │
-│                           │         │                                    │
-│   MCP Server              │         │  Celery Workers                    │
-│   8 water system tools    │         │  · Background agent tasks          │
-└──────────────────────────┘         └────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                         PRESENTATION LAYER                               â”‚
+â”‚  React 19 + TypeScript + Vite  Â·  Zustand  Â·  React Query  Â·  :3000     â”‚
+â”‚                                                                          â”‚
+â”‚  Dashboard Â· Map Â· Countries Â· Rivers Â· Pipelines Â· Sensors Â· Cities    â”‚
+â”‚  Water Quality Â· Climate Â· Forecast Â· Alerts Â· Reports Â· Settings       â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  Agent Console       â”‚  â”‚  Observability    â”‚  â”‚  Knowledge Graph â”‚   â”‚
+â”‚  â”‚  14 AI agents        â”‚  â”‚  Session history  â”‚  â”‚  Digital Twin    â”‚   â”‚
+â”‚  â”‚  Live step trace     â”‚  â”‚  Live metrics     â”‚  â”‚  Workflow viz    â”‚   â”‚
+â”‚  â”‚  Decision Agent chat â”‚  â”‚  Agent memory     â”‚  â”‚  Reports         â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                 â”‚  REST + WebSocket
+                                 â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                            API LAYER  Â·  FastAPI  Â·  :8000               â”‚
+â”‚  JWT Auth Â· CORS Â· GZip Â· Async SQLAlchemy Â· Pydantic v2                â”‚
+â”‚                                                                          â”‚
+â”‚  /auth  /dashboard  /countries  /states  /cities  /rivers               â”‚
+â”‚  /reservoirs  /pipelines  /sensors  /water-quality  /climate            â”‚
+â”‚  /forecast  /alerts  /reports  /simulation  /graph  /mcp                â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚  /agents â€” Session + Memory + Observability                      â”‚    â”‚
+â”‚  â”‚  POST /run     â†’ execute + save AgentExecution + write memory    â”‚    â”‚
+â”‚  â”‚  POST /chat    â†’ Decision Agent chat + persist to DB             â”‚    â”‚
+â”‚  â”‚  GET  /sessions       â†’ full run history from PostgreSQL         â”‚    â”‚
+â”‚  â”‚  GET  /observability  â†’ aggregate stats + per-agent metrics      â”‚    â”‚
+â”‚  â”‚  GET  /memory/{id}    â†’ episodic memories per agent              â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚                                                                          â”‚
+â”‚  WS /ws/live-data  (sensor telemetry, 5s)                               â”‚
+â”‚  WS /ws/agents     (agent status stream, 3s)                            â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                                          â”‚
+       â–¼                                          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   AI AGENT LAYER          â”‚         â”‚         DATA LAYER                 â”‚
+â”‚   Google ADK + Gemini     â”‚         â”‚                                    â”‚
+â”‚                           â”‚         â”‚  PostgreSQL :5432                  â”‚
+â”‚   Rainfall Agent          â”‚         â”‚  Â· Countries, rivers, sensors      â”‚
+â”‚   Reservoir Agent         â”‚         â”‚  Â· AgentExecution (session hist)   â”‚
+â”‚   Flood Agent             â”‚         â”‚  Â· AgentMemory (episodic memory)   â”‚
+â”‚   Water Quality Agent     â”‚         â”‚  Â· Users, alerts, reports          â”‚
+â”‚   Leak Detection Agent    â”‚         â”‚                                    â”‚
+â”‚   Climate Agent           â”‚         â”‚  Redis :6379                       â”‚
+â”‚   Emergency Agent         â”‚         â”‚  Â· Auth token cache                â”‚
+â”‚   Country Agent           â”‚         â”‚  Â· Agent state, pub/sub            â”‚
+â”‚   Groundwater Agent       â”‚         â”‚                                    â”‚
+â”‚   Decision Agent â”€â”€â”€â”€â”€â”€â”€â”€ â”‚â”€â”€â”€â”€â”€â”€â”€â”€ â”‚  Qdrant :6333                      â”‚
+â”‚   Global Coordinator      â”‚ invokes â”‚  Â· Vector embeddings               â”‚
+â”‚   Infrastructure Agent    â”‚ agents  â”‚  Â· Semantic knowledge search       â”‚
+â”‚   Sensor Intelligence     â”‚         â”‚                                    â”‚
+â”‚   Report Generation       â”‚         â”‚  Kafka + Zookeeper :9092           â”‚
+â”‚                           â”‚         â”‚  Â· Sensor telemetry streams        â”‚
+â”‚   Celery Workers          â”‚         â”‚  Â· Agent result events             â”‚
+â”‚   (async task queue)      â”‚         â”‚  Â· Alert broadcasting              â”‚
+â”‚                           â”‚         â”‚                                    â”‚
+â”‚   MCP Server              â”‚         â”‚  Celery Workers                    â”‚
+â”‚   8 water system tools    â”‚         â”‚  Â· Background agent tasks          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-## 🤖 Agent Roster
+## ðŸ¤– Agent Roster
 
 | Agent | Domain | Key Capabilities |
 |-------|--------|-----------------|
-| 🌧 **Rainfall Agent** | Environmental | Satellite data ingestion, anomaly detection, 7-day precipitation forecast |
-| 🏞 **Reservoir Agent** | Infrastructure | Level monitoring, inflow/outflow optimization, overflow prediction |
-| 🌊 **Flood Agent** | Emergency | ML flood crest prediction, discharge calculation, evacuation recommendations |
-| 🧪 **Water Quality Agent** | Safety | 1,400 WHO parameters, contamination detection, treatment advisory |
-| 🔧 **Leak Detection Agent** | Infrastructure | Acoustic sensor analysis, pressure differential mapping, pipe failure prediction |
-| 🌡 **Climate Agent** | Environmental | ERA5/CMIP6 climate modeling, drought index, long-term freshwater projections |
-| 🚨 **Emergency Agent** | Operations | Multi-hazard assessment, protocol activation, cross-agency coordination |
-| 🏛 **Country Agent** | Geographic | National water scoring, SDG 6 benchmarking, cross-border analysis |
-| 💧 **Groundwater Agent** | Environmental | Aquifer depletion monitoring, recharge rate analysis |
-| 🧠 **Decision Agent** | Orchestrator | Multi-criteria decision analysis, MCDA ranking, synthesizes all agents |
-| 🌐 **Global Coordinator** | Orchestrator | Coordinates all 13 specialist agents, identifies cross-system conflicts |
-| 🏗 **Infrastructure Agent** | Operations | GIS pipe network assessment, material degradation modeling, maintenance prioritization |
-| 📡 **Sensor Intelligence** | Operations | Live telemetry processing, anomaly detection across all sensor streams |
-| 📋 **Report Generation** | Operations | Executive and technical report synthesis with Gemini narrative generation |
+| ðŸŒ§ **Rainfall Agent** | Environmental | Satellite data ingestion, anomaly detection, 7-day precipitation forecast |
+| ðŸž **Reservoir Agent** | Infrastructure | Level monitoring, inflow/outflow optimization, overflow prediction |
+| ðŸŒŠ **Flood Agent** | Emergency | ML flood crest prediction, discharge calculation, evacuation recommendations |
+| ðŸ§ª **Water Quality Agent** | Safety | 1,400 WHO parameters, contamination detection, treatment advisory |
+| ðŸ”§ **Leak Detection Agent** | Infrastructure | Acoustic sensor analysis, pressure differential mapping, pipe failure prediction |
+| ðŸŒ¡ **Climate Agent** | Environmental | ERA5/CMIP6 climate modeling, drought index, long-term freshwater projections |
+| ðŸš¨ **Emergency Agent** | Operations | Multi-hazard assessment, protocol activation, cross-agency coordination |
+| ðŸ› **Country Agent** | Geographic | National water scoring, SDG 6 benchmarking, cross-border analysis |
+| ðŸ’§ **Groundwater Agent** | Environmental | Aquifer depletion monitoring, recharge rate analysis |
+| ðŸ§  **Decision Agent** | Orchestrator | Multi-criteria decision analysis, MCDA ranking, synthesizes all agents |
+| ðŸŒ **Global Coordinator** | Orchestrator | Coordinates all 13 specialist agents, identifies cross-system conflicts |
+| ðŸ— **Infrastructure Agent** | Operations | GIS pipe network assessment, material degradation modeling, maintenance prioritization |
+| ðŸ“¡ **Sensor Intelligence** | Operations | Live telemetry processing, anomaly detection across all sensor streams |
+| ðŸ“‹ **Report Generation** | Operations | Executive and technical report synthesis with Gemini narrative generation |
 
 ### Agent Observability
 
 Every agent run is:
-- **Traced** — reasoning steps stream live to the UI as they complete
-- **Persisted** — full result saved to `agent_execution` table with session ID
-- **Remembered** — key outcomes written to `agent_memory` for future context enrichment
-- **Measured** — latency, confidence, tools called, agents invoked — all tracked
+- **Traced** â€” reasoning steps stream live to the UI as they complete
+- **Persisted** â€” full result saved to `agent_execution` table with session ID
+- **Remembered** â€” key outcomes written to `agent_memory` for future context enrichment
+- **Measured** â€” latency, confidence, tools called, agents invoked â€” all tracked
 
 ---
 
-## 🛠 MCP Server Tools
+## ðŸ›  MCP Server Tools
 
 The Model Context Protocol server exposes 8 standardized water system tools:
 
@@ -240,18 +240,18 @@ generateEmergencyPlan(incident_type) # Incident response + resource allocation
 
 ---
 
-## 🗄 Database Architecture
+## ðŸ—„ Database Architecture
 
 | Database | Port | Purpose |
 |----------|------|---------|
-| **PostgreSQL 16** | 5432 | Primary store — countries, rivers, sensors, pipelines, cities, alerts, agent sessions, agent memory, users |
+| **PostgreSQL 16** | 5432 | Primary store â€” countries, rivers, sensors, pipelines, cities, alerts, agent sessions, agent memory, users |
 | **Redis 7** | 6379 | Auth token cache, agent state, real-time pub/sub, rate limiting |
-| **Qdrant** | 6333 | Vector embeddings — semantic knowledge search, agent long-term memory |
+| **Qdrant** | 6333 | Vector embeddings â€” semantic knowledge search, agent long-term memory |
 | **Apache Kafka** | 9092 | Sensor telemetry streaming, agent result events, alert broadcasting |
 
 ---
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ### Prerequisites
 
@@ -317,7 +317,7 @@ curl -X POST http://localhost:8000/api/v1/agents/run \
 
 ---
 
-## 💻 Local Development
+## ðŸ’» Local Development
 
 **Backend (Python 3.12)**
 ```bash
@@ -343,7 +343,7 @@ pytest tests/ -v
 
 ---
 
-## 📡 API Reference
+## ðŸ“¡ API Reference
 
 Full interactive docs at `http://localhost:8000/docs`
 
@@ -387,12 +387,12 @@ Full interactive docs at `http://localhost:8000/docs`
 
 ---
 
-## 🖥 UI Pages
+## ðŸ–¥ UI Pages
 
 | Page | Path | Description |
 |------|------|-------------|
 | **Dashboard** | `/dashboard` | KPIs, reservoir charts, water quality scores, AI reasoning feed |
-| **Global** | `/global` | World-level intelligence — 195 countries, risk heatmap |
+| **Global** | `/global` | World-level intelligence â€” 195 countries, risk heatmap |
 | **Countries** | `/countries` | Country drill-down with AI insights panel |
 | **States** | `/states` | State-level water intelligence |
 | **Cities** | `/cities` | City infrastructure and quality overview |
@@ -413,7 +413,7 @@ Full interactive docs at `http://localhost:8000/docs`
 
 ---
 
-## 📐 Technology Stack
+## ðŸ“ Technology Stack
 
 ### Frontend
 | Technology | Version | Purpose |
@@ -428,7 +428,7 @@ Full interactive docs at `http://localhost:8000/docs`
 | React Flow | 11 | Agent workflow visualization |
 | Leaflet | 1.9 | Interactive world map |
 | Recharts | 2 | Data visualization |
-| Lucide React | — | Icon library |
+| Lucide React | â€” | Icon library |
 
 ### Backend
 | Technology | Version | Purpose |
@@ -437,35 +437,35 @@ Full interactive docs at `http://localhost:8000/docs`
 | FastAPI | 0.111 | REST API + WebSocket |
 | Pydantic | v2 | Data validation |
 | SQLAlchemy | 2.0 | Async ORM |
-| Alembic | — | Database migrations |
-| Celery | — | Async task queue |
-| aioredis | — | Async Redis client |
+| Alembic | â€” | Database migrations |
+| Celery | â€” | Async task queue |
+| aioredis | â€” | Async Redis client |
 
 ### AI / Data
 | Technology | Purpose |
 |-----------|---------|
 | Google Gemini 1.5 Pro | LLM backbone for all 14 agents |
-| Google ADK | Agent Development Kit — agent orchestration framework |
-| MCP | Model Context Protocol — standardized tool interface |
+| Google ADK | Agent Development Kit â€” agent orchestration framework |
+| MCP | Model Context Protocol â€” standardized tool interface |
 | PostgreSQL 16 | Primary relational database + agent sessions/memory |
 | Redis 7 | Cache + pub/sub + session store |
-| Qdrant | Vector database — semantic memory + knowledge search |
-| Apache Kafka | Event streaming — sensor telemetry + agent results |
+| Qdrant | Vector database â€” semantic memory + knowledge search |
+| Apache Kafka | Event streaming â€” sensor telemetry + agent results |
 
 ---
 
-## 🧠 Core Concepts
+## ðŸ§  Core Concepts
 
-### 🤖 Agents — How They Work
+### ðŸ¤– Agents â€” How They Work
 
 Each WaterOS agent is an autonomous AI unit built on **Google ADK** (`BaseWaterAgent`). When invoked, an agent:
 
-1. **Receives a context** — geographic scope (country/state/city) plus any enriched memory from past runs
-2. **Builds a reasoning chain** — adds structured steps via `add_reasoning_step()` at each decision point
-3. **Calls tools** — invokes domain-specific tools (sensor APIs, ML models, satellite data) tracked in `tools_called`
-4. **Optionally invokes sub-agents** — orchestrator agents call specialist agents and collect their outputs
-5. **Calls Gemini 1.5 Pro** — synthesizes all gathered data into a natural-language analysis + structured result
-6. **Returns an `AgentResult`** — containing `status`, `confidence`, `latency_ms`, `reasoning_chain`, `tools_called`, `agents_invoked`, and the full `result` payload
+1. **Receives a context** â€” geographic scope (country/state/city) plus any enriched memory from past runs
+2. **Builds a reasoning chain** â€” adds structured steps via `add_reasoning_step()` at each decision point
+3. **Calls tools** â€” invokes domain-specific tools (sensor APIs, ML models, satellite data) tracked in `tools_called`
+4. **Optionally invokes sub-agents** â€” orchestrator agents call specialist agents and collect their outputs
+5. **Calls Gemini 1.5 Pro** â€” synthesizes all gathered data into a natural-language analysis + structured result
+6. **Returns an `AgentResult`** â€” containing `status`, `confidence`, `latency_ms`, `reasoning_chain`, `tools_called`, `agents_invoked`, and the full `result` payload
 
 ```python
 # Example: how agents self-describe their reasoning
@@ -479,19 +479,19 @@ Every agent run is **non-blocking async** (`async def run()`), allowing the plat
 
 ---
 
-### 🔗 Agent-to-Agent (A2A) Protocol
+### ðŸ”— Agent-to-Agent (A2A) Protocol
 
-WaterOS implements **directed agent invocation chains** — agents call other agents as sub-tasks, forming a reasoning tree:
+WaterOS implements **directed agent invocation chains** â€” agents call other agents as sub-tasks, forming a reasoning tree:
 
 ```
 Decision Agent
-├── invoke Emergency Agent → get crisis level + active alerts
-├── invoke Rainfall Agent  → get 7-day precipitation anomaly
-├── invoke Reservoir Agent → get capacity + overflow risk
-└── synthesize all outputs → Gemini final recommendation
+â”œâ”€â”€ invoke Emergency Agent â†’ get crisis level + active alerts
+â”œâ”€â”€ invoke Rainfall Agent  â†’ get 7-day precipitation anomaly
+â”œâ”€â”€ invoke Reservoir Agent â†’ get capacity + overflow risk
+â””â”€â”€ synthesize all outputs â†’ Gemini final recommendation
 
 Global Coordinator
-└── invoke all 13 specialist agents → unified global water picture
+â””â”€â”€ invoke all 13 specialist agents â†’ unified global water picture
 ```
 
 The A2A mechanism uses `invoke_agent()` on `BaseWaterAgent`:
@@ -503,36 +503,36 @@ async def invoke_agent(self, agent: BaseWaterAgent, context: Dict) -> AgentResul
     return await agent.run(context)
 ```
 
-- **Results propagate upward** — sub-agent outputs become input context for the parent agent
-- **Agents are tracked** — `agents_invoked` in every `AgentResult` shows the full invocation tree
-- **Visualized** — the Workflow page renders this chain as an interactive React Flow graph
+- **Results propagate upward** â€” sub-agent outputs become input context for the parent agent
+- **Agents are tracked** â€” `agents_invoked` in every `AgentResult` shows the full invocation tree
+- **Visualized** â€” the Workflow page renders this chain as an interactive React Flow graph
 
 ---
 
-### 🛠 MCP — Model Context Protocol
+### ðŸ›  MCP â€” Model Context Protocol
 
 The **Model Context Protocol (MCP)** server exposes 8 standardized water domain tools that any agent can call. MCP provides a vendor-neutral interface so agents interact with water systems through structured, typed tool calls rather than raw API calls:
 
 ```
-Agent  →  MCP Tool Call  →  Water System Data
+Agent  â†’  MCP Tool Call  â†’  Water System Data
 ```
 
 | Tool | Input | Output |
 |------|-------|--------|
-| `getReservoirStatus(id)` | reservoir ID | level %, inflow/outflow m³/s, days-to-full |
+| `getReservoirStatus(id)` | reservoir ID | level %, inflow/outflow mÂ³/s, days-to-full |
 | `predictFlood(river_id, hours)` | river + forecast window | probability %, crest time, risk level |
 | `detectLeak(pipeline_id)` | pipeline segment | leak probability, pressure drop bar, loss L/s |
 | `getWaterQuality(zone_id)` | monitoring zone | WQI score, pH, turbidity, chlorine, violations |
 | `forecastRain(location, days)` | location + days | mm/day breakdown, anomaly %, storm probability |
 | `getGroundWater(aquifer_id)` | aquifer ID | depth m, recharge rate, depletion trend |
-| `optimizeReservoir(id)` | reservoir ID | optimal release schedule m³/s |
+| `optimizeReservoir(id)` | reservoir ID | optimal release schedule mÂ³/s |
 | `generateEmergencyPlan(type)` | incident type | response protocol, resource allocation |
 
 MCP tools are accessible via the API at `GET /api/v1/mcp/tools` and `POST /api/v1/mcp/call`.
 
 ---
 
-### 💾 Agent Sessions
+### ðŸ’¾ Agent Sessions
 
 Every agent run creates a **persistent session record** in PostgreSQL (`agent_execution` table):
 
@@ -546,37 +546,37 @@ agent_execution (
   reasoning_chain JSONB,        -- step-by-step trace
   tools_called    JSONB,        -- tool invocations
   agents_invoked  JSONB,        -- sub-agents called
-  confidence      FLOAT,        -- 0.0 – 1.0
+  confidence      FLOAT,        -- 0.0 â€“ 1.0
   latency_ms      INTEGER,      -- wall-clock execution time
   started_at      TIMESTAMPTZ,
   completed_at    TIMESTAMPTZ
 )
 ```
 
-**Session ID** ties related runs together — all agents run from the same browser session share a session ID, enabling cross-agent correlation.
+**Session ID** ties related runs together â€” all agents run from the same browser session share a session ID, enabling cross-agent correlation.
 
 The frontend persists sessions in **two places**:
-- **PostgreSQL** (via backend) — durable, survives restarts, queryable
-- **localStorage** (via Zustand persist) — instant access, works offline, survives page refresh
+- **PostgreSQL** (via backend) â€” durable, survives restarts, queryable
+- **localStorage** (via Zustand persist) â€” instant access, works offline, survives page refresh
 
 Sessions are accessible via `GET /api/v1/agents/sessions` and displayed in the Observability panel.
 
 ---
 
-### 🧬 Agent Memory
+### ðŸ§¬ Agent Memory
 
-WaterOS implements **episodic memory** — agents remember past runs and use that knowledge to enrich future analysis:
+WaterOS implements **episodic memory** â€” agents remember past runs and use that knowledge to enrich future analysis:
 
 ```
-Run 1: Flood Agent → India/Assam
-         └─ result saved to agent_memory table
+Run 1: Flood Agent â†’ India/Assam
+         â””â”€ result saved to agent_memory table
               { type: "episodic", content: "Last run for Assam: completed",
                 context: { scope, confidence, tools_called, summary } }
 
-Run 2: Flood Agent → India/Assam (again)
-         └─ backend loads last 3 memories
-         └─ enriches context: { _memory: [...past results...] }
-         └─ agent now has historical context and can detect trends
+Run 2: Flood Agent â†’ India/Assam (again)
+         â””â”€ backend loads last 3 memories
+         â””â”€ enriches context: { _memory: [...past results...] }
+         â””â”€ agent now has historical context and can detect trends
 ```
 
 ```sql
@@ -586,37 +586,37 @@ agent_memory (
   memory_type  VARCHAR,          -- episodic / semantic / procedural
   content      TEXT,             -- human-readable summary
   context      JSONB,            -- structured data snapshot
-  importance   FLOAT,            -- 0.0 – 1.0 (based on confidence)
+  importance   FLOAT,            -- 0.0 â€“ 1.0 (based on confidence)
   created_at   TIMESTAMPTZ,
   expires_at   TIMESTAMPTZ       -- optional TTL
 )
 ```
 
 Memory types:
-- **Episodic** — "what happened last time" (auto-written after each successful run)
-- **Semantic** — domain knowledge about water systems (can be pre-seeded)
-- **Procedural** — learned response patterns (for future automation)
+- **Episodic** â€” "what happened last time" (auto-written after each successful run)
+- **Semantic** â€” domain knowledge about water systems (can be pre-seeded)
+- **Procedural** â€” learned response patterns (for future automation)
 
 Memory is retrieved via `GET /api/v1/agents/memory/{agent_id}` and shown in the Observability panel.
 
 ---
 
-### 📊 Observability
+### ðŸ“Š Observability
 
 WaterOS provides **full execution observability** at three levels:
 
 #### 1. Live Step Trace (in the Agent Card)
-While an agent is running, each reasoning step streams to the UI as it completes — showing exactly what the agent is "thinking" in real time:
+While an agent is running, each reasoning step streams to the UI as it completes â€” showing exactly what the agent is "thinking" in real time:
 ```
-✓ Retrieved river gauge data for Assam
-✓ Applied ML flood prediction model (50-year training set)
-✓ Computed crest arrival time and at-risk districts
-⟳ Generating evacuation recommendations...
+âœ“ Retrieved river gauge data for Assam
+âœ“ Applied ML flood prediction model (50-year training set)
+âœ“ Computed crest arrival time and at-risk districts
+âŸ³ Generating evacuation recommendations...
 ```
 
 #### 2. Session Observability Panel (in the UI)
 The **Observability tab** in the Agent Console right panel shows:
-- **Stats**: Total Runs · Avg Latency · Success Rate · Tools Called
+- **Stats**: Total Runs Â· Avg Latency Â· Success Rate Â· Tools Called
 - **Live Execution**: active agents + their current step trace
 - **Session History**: timeline of all past runs with agent, status, latency, timestamp, tools used
 - **Agent Performance**: per-agent confidence bar chart + run count
@@ -639,105 +639,105 @@ The **Observability tab** in the Agent Console right panel shows:
 }
 ```
 
-All data is sourced live from PostgreSQL — no in-memory approximations.
+All data is sourced live from PostgreSQL â€” no in-memory approximations.
 
 ---
 
-### 🌊 Data Feeding Flow
+### ðŸŒŠ Data Feeding Flow
 
 WaterOS ingests water data through multiple parallel pipelines:
 
 ```
 EXTERNAL DATA SOURCES
-────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Satellite Rainfall (TRMM/GPM)   River Gauge Stations
 Reservoir Level Sensors          Acoustic Leak Sensors
 WHO Water Quality Labs           Weather Station APIs
 Climate Models (ERA5, CMIP6)    Groundwater Wells
-────────────────────────────────────────────────────────
-                │                         │
-                ▼                         ▼
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                â”‚                         â”‚
+                â–¼                         â–¼
         REST API Ingestion         Apache Kafka Topics
         (scheduled batch)          (real-time streaming)
-                │                         │
-                └──────────┬──────────────┘
-                           ▼
-              ┌────────────────────────────┐
-              │     PostgreSQL (primary)    │
-              │  sensors, reservoirs,       │
-              │  rivers, quality readings   │
-              └────────────────────────────┘
-                           │
-              ┌────────────┴───────────────┐
-              ▼                            ▼
+                â”‚                         â”‚
+                â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚     PostgreSQL (primary)    â”‚
+              â”‚  sensors, reservoirs,       â”‚
+              â”‚  rivers, quality readings   â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â–¼                            â–¼
          Redis Cache                  Qdrant Vector DB
          (hot data, TTL)              (semantic index,
          (pub/sub events)              knowledge graph)
-                           │
-                           ▼
+                           â”‚
+                           â–¼
               FastAPI Backend (:8000)
               (REST + WebSocket endpoints)
-                           │
-              ┌────────────┴────────────────┐
-              ▼                             ▼
+                           â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â–¼                             â–¼
       React Frontend              AI Agent Layer
       (live tables, charts,       (reads DB via context
        sensor grids, maps)         injected at invocation)
 ```
 
-**WebSocket live feed** (`/ws/live-data`) pushes sensor updates every 5 seconds directly to the frontend — reservoir levels, river heights, quality scores, flood risk, active alert counts — enabling real-time dashboard updates without polling.
+**WebSocket live feed** (`/ws/live-data`) pushes sensor updates every 5 seconds directly to the frontend â€” reservoir levels, river heights, quality scores, flood risk, active alert counts â€” enabling real-time dashboard updates without polling.
 
 **Kafka** handles high-throughput sensor events: each sensor reading is published to a Kafka topic, consumed by backend workers, persisted to PostgreSQL, and fanned out to connected WebSocket clients.
 
 ---
 
-### 🔬 Agent Analysis Pipeline
+### ðŸ”¬ Agent Analysis Pipeline
 
 When you click **Run** on an agent, this is the full pipeline:
 
 ```
 1. CONTEXT ASSEMBLY
-   ─────────────────────────────────────────
-   • Geographic scope: { country, state, city }
-   • Agent memory: last 3 episodic memories from PostgreSQL
-   • Enriched context passed to agent.execute()
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â€¢ Geographic scope: { country, state, city }
+   â€¢ Agent memory: last 3 episodic memories from PostgreSQL
+   â€¢ Enriched context passed to agent.execute()
 
 2. AGENT EXECUTION  (BaseWaterAgent.execute)
-   ─────────────────────────────────────────
-   • Reset reasoning_chain, tools_called, agents_invoked
-   • Start wall-clock timer
-   • Call agent.run(enriched_context)
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â€¢ Reset reasoning_chain, tools_called, agents_invoked
+   â€¢ Start wall-clock timer
+   â€¢ Call agent.run(enriched_context)
 
 3. INSIDE agent.run()
-   ─────────────────────────────────────────
-   • add_reasoning_step("Agent started") → reasoning_chain[]
-   • Query sensor data / satellite APIs (via MCP tools or direct)
-   • add_reasoning_step("Data retrieved") → reasoning_chain[]
-   • Invoke sub-agents if orchestrator (A2A protocol)
-   • add_reasoning_step("Sub-agents complete") → reasoning_chain[]
-   • Build Gemini prompt with all gathered evidence
-   • call_gemini(prompt) → natural language analysis
-   • add_reasoning_step("AI synthesis complete") → reasoning_chain[]
-   • Return AgentResult with structured result + analysis text
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â€¢ add_reasoning_step("Agent started") â†’ reasoning_chain[]
+   â€¢ Query sensor data / satellite APIs (via MCP tools or direct)
+   â€¢ add_reasoning_step("Data retrieved") â†’ reasoning_chain[]
+   â€¢ Invoke sub-agents if orchestrator (A2A protocol)
+   â€¢ add_reasoning_step("Sub-agents complete") â†’ reasoning_chain[]
+   â€¢ Build Gemini prompt with all gathered evidence
+   â€¢ call_gemini(prompt) â†’ natural language analysis
+   â€¢ add_reasoning_step("AI synthesis complete") â†’ reasoning_chain[]
+   â€¢ Return AgentResult with structured result + analysis text
 
 4. POST-EXECUTION  (backend /agents/run)
-   ─────────────────────────────────────────
-   • Calculate total latency_ms
-   • Save AgentExecution → PostgreSQL (full audit trail)
-   • Write episodic AgentMemory → PostgreSQL (for future context)
-   • Return { result, reasoning_chain, confidence, execution_id, session_id }
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â€¢ Calculate total latency_ms
+   â€¢ Save AgentExecution â†’ PostgreSQL (full audit trail)
+   â€¢ Write episodic AgentMemory â†’ PostgreSQL (for future context)
+   â€¢ Return { result, reasoning_chain, confidence, execution_id, session_id }
 
 5. FRONTEND RENDERING
-   ─────────────────────────────────────────
-   • Each reasoning step streamed live during mock execution (step animation)
-   • AgentResult displayed in expanded card: rich result + reasoning chain + tools
-   • AgentSession saved to localStorage + backend
-   • Observability panel refreshes: stats, timeline, per-agent metrics
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   â€¢ Each reasoning step streamed live during mock execution (step animation)
+   â€¢ AgentResult displayed in expanded card: rich result + reasoning chain + tools
+   â€¢ AgentSession saved to localStorage + backend
+   â€¢ Observability panel refreshes: stats, timeline, per-agent metrics
 ```
 
 ---
 
-### 🗃 Database Connections
+### ðŸ—ƒ Database Connections
 
 WaterOS uses **async SQLAlchemy 2.0** with connection pooling for all DB access:
 
@@ -750,31 +750,31 @@ engine = create_async_engine(
     pool_pre_ping=True,     # verify connection before checkout
 )
 
-# Dependency injection — every request gets its own session
+# Dependency injection â€” every request gets its own session
 async def get_db():
     async with AsyncSessionLocal() as session:
         yield session
         # auto-close on request completion
 ```
 
-**Tables auto-created on startup** — `main.py` lifespan calls `Base.metadata.create_all()` on boot, ensuring all tables exist without requiring manual migrations for development.
+**Tables auto-created on startup** â€” `main.py` lifespan calls `Base.metadata.create_all()` on boot, ensuring all tables exist without requiring manual migrations for development.
 
 **Key tables and relationships:**
 
 ```
-users              ← authentication, RBAC
-├── countries      ← 195 countries with water metrics
-│   ├── states     ← state-level data
-│   │   └── cities ← city infrastructure
-├── rivers         ← river gauges + flow data
-├── reservoirs     ← storage levels + forecasts
-├── pipelines      ← network segments + pressure
-├── sensors        ← all sensor types (quality, level, flow, acoustic)
-├── alerts         ← AI-generated + manual alerts
-└── reports        ← generated report metadata
+users              â† authentication, RBAC
+â”œâ”€â”€ countries      â† 195 countries with water metrics
+â”‚   â”œâ”€â”€ states     â† state-level data
+â”‚   â”‚   â””â”€â”€ cities â† city infrastructure
+â”œâ”€â”€ rivers         â† river gauges + flow data
+â”œâ”€â”€ reservoirs     â† storage levels + forecasts
+â”œâ”€â”€ pipelines      â† network segments + pressure
+â”œâ”€â”€ sensors        â† all sensor types (quality, level, flow, acoustic)
+â”œâ”€â”€ alerts         â† AI-generated + manual alerts
+â””â”€â”€ reports        â† generated report metadata
 
-agent_execution    ← every agent run (session history, observability)
-agent_memory       ← episodic/semantic agent memory
+agent_execution    â† every agent run (session history, observability)
+agent_memory       â† episodic/semantic agent memory
 ```
 
 **Redis** is used for:
@@ -789,51 +789,51 @@ agent_memory       ← episodic/semantic agent memory
 
 ---
 
-### 🎯 Decision Making — How the Decision Agent Works
+### ðŸŽ¯ Decision Making â€” How the Decision Agent Works
 
-The **Decision Agent** is the master orchestrator — it runs a full **Multi-Criteria Decision Analysis (MCDA)** across all water domain inputs:
+The **Decision Agent** is the master orchestrator â€” it runs a full **Multi-Criteria Decision Analysis (MCDA)** across all water domain inputs:
 
 ```
 Step 1: GATHER
-──────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Decision Agent invokes (in parallel):
-  • Emergency Agent  → current crisis level + active alerts
-  • Rainfall Agent   → precipitation anomaly + storm probability
-  • Reservoir Agent  → capacity + overflow/shortage risk
+  â€¢ Emergency Agent  â†’ current crisis level + active alerts
+  â€¢ Rainfall Agent   â†’ precipitation anomaly + storm probability
+  â€¢ Reservoir Agent  â†’ capacity + overflow/shortage risk
 
 Each sub-agent runs its own analysis chain and returns an AgentResult.
 All results are collected as structured JSON evidence.
 
 Step 2: WEIGHT
-──────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 MCDA weights applied to each domain:
-  • Water Security:    40%  (flood risk, quality violations, scarcity)
-  • Economic Impact:   30%  (infrastructure cost, NRW losses, crop impact)
-  • Environmental:     30%  (ecosystem health, groundwater, climate trend)
+  â€¢ Water Security:    40%  (flood risk, quality violations, scarcity)
+  â€¢ Economic Impact:   30%  (infrastructure cost, NRW losses, crop impact)
+  â€¢ Environmental:     30%  (ecosystem health, groundwater, climate trend)
 
 Each intervention option is scored across all three dimensions.
 
 Step 3: RANK
-──────────────────────────────────────────────
-Options sorted by weighted score → cost-benefit ratio calculated.
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Options sorted by weighted score â†’ cost-benefit ratio calculated.
 Top recommendation selected with confidence score.
 
 Step 4: SYNTHESIZE (Gemini 1.5 Pro)
-──────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Prompt constructed with:
-  • All sub-agent results (structured JSON)
-  • Geographic context + historical memory
-  • MCDA rankings + cost-benefit ratios
-  • WHO standards + SDG 6 benchmarks
+  â€¢ All sub-agent results (structured JSON)
+  â€¢ Geographic context + historical memory
+  â€¢ MCDA rankings + cost-benefit ratios
+  â€¢ WHO standards + SDG 6 benchmarks
 
 Gemini generates:
-  • Executive summary (3-5 sentences)
-  • Top recommendation with justification
-  • Secondary actions prioritized
-  • Risk assessment with confidence intervals
+  â€¢ Executive summary (3-5 sentences)
+  â€¢ Top recommendation with justification
+  â€¢ Secondary actions prioritized
+  â€¢ Risk assessment with confidence intervals
 
 Step 5: RETURN AgentResult
-──────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 {
   "top_recommendation": "Prioritize pipe replacement in 3 critical sections",
   "confidence_score": 0.88,
@@ -845,37 +845,37 @@ Step 5: RETURN AgentResult
 }
 ```
 
-**Chat mode** — when you message the Decision Agent in the Chat panel, it bypasses the full cascade and directly answers your question using its domain knowledge + any available geo context:
+**Chat mode** â€” when you message the Decision Agent in the Chat panel, it bypasses the full cascade and directly answers your question using its domain knowledge + any available geo context:
 
 ```
 User: "What's the flood risk in Assam this week?"
-  → Decision Agent fast-path (mode: "chat")
-  → Calls Gemini with flood domain prompt + current sensor context
-  → Returns natural language answer in < 2 seconds
-  → Persisted to agent_execution table with session_id
+  â†’ Decision Agent fast-path (mode: "chat")
+  â†’ Calls Gemini with flood domain prompt + current sensor context
+  â†’ Returns natural language answer in < 2 seconds
+  â†’ Persisted to agent_execution table with session_id
 ```
 
 ---
 
-## 🌍 Real-World Scenarios
+## ðŸŒ Real-World Scenarios
 
-### Scenario 1 — Brahmaputra Flood Warning, Assam India
+### Scenario 1 â€” Brahmaputra Flood Warning, Assam India
 
 **Situation:** Heavy monsoon rainfall in Assam causes river levels to rise rapidly. District officials need to know: should they evacuate?
 
 **What WaterOS does:**
 
 1. **Rainfall Agent** detects 112mm of rainfall in 7 days (+18% above seasonal average via satellite data)
-2. **Flood Agent** pulls gauge station data — Brahmaputra at **5.2m**, threshold is **6.0m** — and runs the ML crest prediction model: **storm probability 38% over 72h**, no immediate evacuation required
-3. **Reservoir Agent** sees Hirakud Dam at **91.2%** capacity → recommends controlled release of **320 m³/s**
-4. **Emergency Agent** assesses: crisis level **MEDIUM** — pre-position NDRF units, 6-hour monitoring intervals
-5. **Decision Agent** synthesizes all four results → issues recommendation: *"No evacuation at current levels. Release 320 m³/s from Hirakud. Deploy 2 NDRF battalions to Guwahati. Escalate if gauge crosses 5.8m."*
+2. **Flood Agent** pulls gauge station data â€” Brahmaputra at **5.2m**, threshold is **6.0m** â€” and runs the ML crest prediction model: **storm probability 38% over 72h**, no immediate evacuation required
+3. **Reservoir Agent** sees Hirakud Dam at **91.2%** capacity â†’ recommends controlled release of **320 mÂ³/s**
+4. **Emergency Agent** assesses: crisis level **MEDIUM** â€” pre-position NDRF units, 6-hour monitoring intervals
+5. **Decision Agent** synthesizes all four results â†’ issues recommendation: *"No evacuation at current levels. Release 320 mÂ³/s from Hirakud. Deploy 2 NDRF battalions to Guwahati. Escalate if gauge crosses 5.8m."*
 
 **Time to insight: ~4 seconds.** All reasoning steps visible in the Agent Console.
 
 ---
 
-### Scenario 2 — Mumbai Pipeline Leak — 680 MLD Water Loss Daily
+### Scenario 2 â€” Mumbai Pipeline Leak â€” 680 MLD Water Loss Daily
 
 **Situation:** Mumbai's water utility suspects significant water loss in the city's aging pipe network. They need to find and prioritize leaks.
 
@@ -883,24 +883,24 @@ User: "What's the flood risk in Assam this week?"
 
 1. **Leak Detection Agent** processes acoustic sensor arrays across **1,840km** of Mumbai's network
 2. Pressure differential analysis flags **284 active leak zones**
-3. Severity ranking identifies **3 trunk main fractures in Dharavi sector** — highest priority (94% leak probability, 680 MLD daily loss)
-4. **Infrastructure Agent** pulls GIS data: affected mains are **38 years old**, material: CI pipe — highest failure risk
+3. Severity ranking identifies **3 trunk main fractures in Dharavi sector** â€” highest priority (94% leak probability, 680 MLD daily loss)
+4. **Infrastructure Agent** pulls GIS data: affected mains are **38 years old**, material: CI pipe â€” highest failure risk
 5. **Decision Agent** calculates: emergency replacement of 3 sections has **cost-benefit ratio 4.2:1** (water recovered vs. repair cost)
 6. Auto-generates: maintenance work order + material list + contractor briefing document via **Report Generation Agent**
 
-**Economic impact prevented: ₹18,200/day per section.** Full audit trail in PostgreSQL.
+**Economic impact prevented: â‚¹18,200/day per section.** Full audit trail in PostgreSQL.
 
 ---
 
-### Scenario 3 — Rajasthan Groundwater Emergency
+### Scenario 3 â€” Rajasthan Groundwater Emergency
 
-**Situation:** Groundwater depths in Rajasthan are hitting critical levels — farmers can't extract water, cities face rationing. How bad is it?
+**Situation:** Groundwater depths in Rajasthan are hitting critical levels â€” farmers can't extract water, cities face rationing. How bad is it?
 
 **What WaterOS does:**
 
-1. **Groundwater Agent** pulls aquifer monitoring data — depth **42m below surface**, recharge rate declining 3m/year
-2. **Climate Agent** loads ERA5 reanalysis: **+1.42°C temperature anomaly**, rainfall deficit **38% below 30-year average**, desertification index **0.82** (highest in India)
-3. **Country Agent** benchmarks against SDG 6: India's water score for Rajasthan — **41/100 (Critical)**
+1. **Groundwater Agent** pulls aquifer monitoring data â€” depth **42m below surface**, recharge rate declining 3m/year
+2. **Climate Agent** loads ERA5 reanalysis: **+1.42Â°C temperature anomaly**, rainfall deficit **38% below 30-year average**, desertification index **0.82** (highest in India)
+3. **Country Agent** benchmarks against SDG 6: India's water score for Rajasthan â€” **41/100 (Critical)**
 4. **Decision Agent** MCDA analysis identifies: water security score **41**, economic impact HIGH (crop failure risk), environmental score CRITICAL
 5. Output: Water rationing enforced across **12 districts**, emergency groundwater recharge programme recommended, alternative supply corridors prioritized
 
@@ -908,31 +908,31 @@ User: "What's the flood risk in Assam this week?"
 
 ---
 
-### Scenario 4 — WHO Water Quality Violation, Guwahati
+### Scenario 4 â€” WHO Water Quality Violation, Guwahati
 
 **Situation:** A WaterOS sensor at the Guwahati treatment plant spikes. Is the drinking water safe?
 
 **What WaterOS does:**
 
 1. **Sensor Intelligence Agent** detects anomaly: turbidity at **8.4 NTU** (safe limit: 4 NTU) at Station S008
-2. **Water Quality Agent** runs WHO compliance check across **1,400 parameters** — turbidity violation confirmed, pH normal (7.3), chlorine residual 0.72 mg/L (within range)
+2. **Water Quality Agent** runs WHO compliance check across **1,400 parameters** â€” turbidity violation confirmed, pH normal (7.3), chlorine residual 0.72 mg/L (within range)
 3. Alert auto-generated: **Zone 7 boil-water advisory** issued for ~84,000 residents
 4. **Emergency Agent** activates: advisory distributed via alert broadcast system, water tanker fleet mobilized
-5. Root cause analysis: heavy rainfall event caused sediment surge — treatment plant capacity increase recommended
+5. Root cause analysis: heavy rainfall event caused sediment surge â€” treatment plant capacity increase recommended
 
 **Time from sensor spike to public advisory: 8 seconds.**
 
 ---
 
-### Scenario 5 — Murray-Darling Basin, Australia — Drought Planning
+### Scenario 5 â€” Murray-Darling Basin, Australia â€” Drought Planning
 
-**Situation:** Australia's Murray-Darling Basin is at **18.4% reservoir capacity** — the lowest in 20 years. Long-term planning needed.
+**Situation:** Australia's Murray-Darling Basin is at **18.4% reservoir capacity** â€” the lowest in 20 years. Long-term planning needed.
 
 **What WaterOS does:**
 
 1. **Reservoir Agent** confirms: Murray-Darling at 18.4%, Stage 4 restrictions active, **days-to-empty: 34**
-2. **Climate Agent** projects: +1.2°C warming by 2035 will reduce basin inflows by **15%** under RCP 4.5
-3. **Country Agent** (Australia): water score **71/100**, but Basin region critical — SDG 6 compliance at risk
+2. **Climate Agent** projects: +1.2Â°C warming by 2035 will reduce basin inflows by **15%** under RCP 4.5
+3. **Country Agent** (Australia): water score **71/100**, but Basin region critical â€” SDG 6 compliance at risk
 4. **Decision Agent** generates 5-year water security plan with three scenarios:
    - **Optimistic** (wet year): restrictions ease by Q3, 65% capacity by end of year
    - **Baseline** (trend continues): rationing through 2026, 2 new desalination plants needed
@@ -941,7 +941,7 @@ User: "What's the flood risk in Assam this week?"
 
 ---
 
-### Scenario 6 — Real-Time Agent Chat Example
+### Scenario 6 â€” Real-Time Agent Chat Example
 
 ```
 User:  "What's the water situation in Delhi right now?"
@@ -949,86 +949,87 @@ User:  "What's the water situation in Delhi right now?"
 Decision Agent:
   "Delhi water intelligence summary:
 
-   Supply: Yamuna WQI at 51 — borderline for treatment, unsafe for direct contact.
-   BOD levels 3× the safe limit at Okhla station. WTP Sonia Vihar running at 94%
+   Supply: Yamuna WQI at 51 â€” borderline for treatment, unsafe for direct contact.
+   BOD levels 3Ã— the safe limit at Okhla station. WTP Sonia Vihar running at 94%
    capacity to compensate for quality deterioration.
 
    Infrastructure: 631 active leak zones, estimated 920 MLD of unaccounted-for water
-   daily — equivalent to 12% of total supply lost before reaching consumers.
-   Per capita supply: 172 LPCD vs. target 270 LPCD — a 36% shortfall.
+   daily â€” equivalent to 12% of total supply lost before reaching consumers.
+   Per capita supply: 172 LPCD vs. target 270 LPCD â€” a 36% shortfall.
 
    Priority actions:
    1. Accelerate Yamuna rejuvenation (sewage treatment capacity +40%)
-   2. Replace 280km of pre-1970 CI pipes in Central Delhi — highest leak density
+   2. Replace 280km of pre-1970 CI pipes in Central Delhi â€” highest leak density
    3. Zone 4, 7, 11 now on alternate-day supply schedule
 
-   Overall Delhi Water Score: 58/100 — Warning level."
+   Overall Delhi Water Score: 58/100 â€” Warning level."
 ```
 
 ---
 
-## 🏆 Hackathon Highlights
+## ðŸ† Hackathon Highlights
 
-This project was built for **Google AI Hackathon 2025** and demonstrates:
+This project was built for **Google AI Hackathon 2026** and demonstrates:
 
-1. **Google ADK** — purpose-built multi-agent orchestration using the Agent Development Kit
-2. **Gemini 1.5 Pro** — powering all 14 agents with long-context reasoning and structured outputs
-3. **Agent-to-Agent (A2A)** — agents invoke each other in directed chains, results flow as context
-4. **MCP Integration** — Model Context Protocol server exposes water domain tools to all agents
-5. **Real-world Impact** — water security is a top-3 global risk; this platform addresses monitoring, prediction, and response at scale
-6. **Production Architecture** — not a demo toy: PostgreSQL, Kafka, Redis, Qdrant, Docker, JWT, async throughout
+1. **Google ADK** â€” purpose-built multi-agent orchestration using the Agent Development Kit
+2. **Gemini 1.5 Pro** â€” powering all 14 agents with long-context reasoning and structured outputs
+3. **Agent-to-Agent (A2A)** â€” agents invoke each other in directed chains, results flow as context
+4. **MCP Integration** â€” Model Context Protocol server exposes water domain tools to all agents
+5. **Real-world Impact** â€” water security is a top-3 global risk; this platform addresses monitoring, prediction, and response at scale
+6. **Production Architecture** â€” not a demo toy: PostgreSQL, Kafka, Redis, Qdrant, Docker, JWT, async throughout
 
 ---
 
-## 📁 Project Structure
+## ðŸ“ Project Structure
 
 ```
 WaterOS/
-├── frontend/                   # React 19 + TypeScript application
-│   └── src/
-│       ├── pages/              # 20 application pages
-│       ├── components/         # Reusable UI components
-│       ├── store/              # Zustand state stores
-│       │   ├── authStore.ts    # JWT auth state (persisted)
-│       │   ├── agentStore.ts   # Agent state
-│       │   └── agentSessionStore.ts  # Session + chat history (persisted)
-│       ├── services/api.ts     # Axios API client + all endpoint definitions
-│       └── types/              # TypeScript type definitions
-│
-├── backend/                    # FastAPI Python application
-│   └── app/
-│       ├── agents/             # 14 Google ADK agent implementations
-│       │   ├── base_agent.py   # BaseWaterAgent + AgentResult
-│       │   ├── decision_agent.py
-│       │   ├── flood_agent.py
-│       │   └── ...
-│       ├── api/v1/endpoints/   # REST API routes
-│       │   └── agents.py       # Sessions, memory, observability
-│       ├── models/             # SQLAlchemy models
-│       │   └── agent.py        # AgentExecution + AgentMemory tables
-│       ├── mcp/server.py       # MCP tool server
-│       └── main.py             # FastAPI app + WebSocket + DB init
-│
-├── docs/
-│   └── architecture.md         # Full architecture diagram
-├── docker-compose.yml          # 8-service container orchestration
-└── README.md
+â”œâ”€â”€ frontend/                   # React 19 + TypeScript application
+â”‚   â””â”€â”€ src/
+â”‚       â”œâ”€â”€ pages/              # 20 application pages
+â”‚       â”œâ”€â”€ components/         # Reusable UI components
+â”‚       â”œâ”€â”€ store/              # Zustand state stores
+â”‚       â”‚   â”œâ”€â”€ authStore.ts    # JWT auth state (persisted)
+â”‚       â”‚   â”œâ”€â”€ agentStore.ts   # Agent state
+â”‚       â”‚   â””â”€â”€ agentSessionStore.ts  # Session + chat history (persisted)
+â”‚       â”œâ”€â”€ services/api.ts     # Axios API client + all endpoint definitions
+â”‚       â””â”€â”€ types/              # TypeScript type definitions
+â”‚
+â”œâ”€â”€ backend/                    # FastAPI Python application
+â”‚   â””â”€â”€ app/
+â”‚       â”œâ”€â”€ agents/             # 14 Google ADK agent implementations
+â”‚       â”‚   â”œâ”€â”€ base_agent.py   # BaseWaterAgent + AgentResult
+â”‚       â”‚   â”œâ”€â”€ decision_agent.py
+â”‚       â”‚   â”œâ”€â”€ flood_agent.py
+â”‚       â”‚   â””â”€â”€ ...
+â”‚       â”œâ”€â”€ api/v1/endpoints/   # REST API routes
+â”‚       â”‚   â””â”€â”€ agents.py       # Sessions, memory, observability
+â”‚       â”œâ”€â”€ models/             # SQLAlchemy models
+â”‚       â”‚   â””â”€â”€ agent.py        # AgentExecution + AgentMemory tables
+â”‚       â”œâ”€â”€ mcp/server.py       # MCP tool server
+â”‚       â””â”€â”€ main.py             # FastAPI app + WebSocket + DB init
+â”‚
+â”œâ”€â”€ docs/
+â”‚   â””â”€â”€ architecture.md         # Full architecture diagram
+â”œâ”€â”€ docker-compose.yml          # 8-service container orchestration
+â””â”€â”€ README.md
 ```
 
 ---
 
-## 📄 License
+## ðŸ“„ License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License â€” see [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
 
-Built with ❤️ for **Google AI Hackathon 2025**
+Built with â¤ï¸ for **Google AI Hackathon 2026**
 
 *Protecting Earth's most precious resource with AI*
 
 [![GitHub](https://img.shields.io/badge/GitHub-Muralee99%2FWaterOS-181717?style=for-the-badge&logo=github)](https://github.com/Muralee99/WaterOS)
 
 </div>
+
