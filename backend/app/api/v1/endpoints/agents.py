@@ -10,6 +10,11 @@ from app.api.deps import get_current_user
 from app.agents import AGENT_REGISTRY, AGENT_METADATA
 from app.db.base import get_db
 from app.models.agent import AgentExecution, AgentMemory
+from app.agents.governance import (
+    get_instructions, get_circuit_status,
+    get_rate_limit_status, get_audit_log,
+    get_governance_summary, record_human_override,
+)
 
 router = APIRouter(prefix="/agents", tags=["Agents"])
 
@@ -71,7 +76,7 @@ async def run_agent(
     agent_class = AGENT_REGISTRY[request.agent_id]
     agent = agent_class()
     started_at = datetime.now(timezone.utc)
-    result = await agent.execute(enriched_context)
+    result = await agent.execute(enriched_context, session_id=session_id)
     completed_at = datetime.now(timezone.utc)
 
     session_id = request.session_id or str(uuid.uuid4())
@@ -327,3 +332,76 @@ async def get_observability(
         "per_agent": per_agent,
         "timeline": timeline,
     }
+
+
+# ── Governance endpoints ───────────────────────────────────────────────────────
+
+@router.get("/governance/instructions")
+async def list_agent_instructions(user=Depends(get_current_user)):
+    """Return system instructions, constraints, and behavioural rules for all agents."""
+    return {
+        agent_id: get_instructions(agent_id)
+        for agent_id in AGENT_REGISTRY
+    }
+
+
+@router.get("/governance/instructions/{agent_id}")
+async def get_agent_instructions(agent_id: str, user=Depends(get_current_user)):
+    """Return instructions for a specific agent."""
+    if agent_id not in AGENT_REGISTRY:
+        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
+    return get_instructions(agent_id)
+
+
+@router.get("/governance/audit")
+async def get_audit_trail(
+    agent_id: Optional[str] = None,
+    event_type: Optional[str] = None,
+    limit: int = 100,
+    user=Depends(get_current_user),
+):
+    """Return governance audit log — escalations, overrides, SLA breaches, low-confidence flags."""
+    return {
+        "entries": get_audit_log(agent_id=agent_id, event_type=event_type, limit=limit),
+        "summary": get_governance_summary(),
+    }
+
+
+@router.get("/governance/circuit-breakers")
+async def get_circuit_breakers(user=Depends(get_current_user)):
+    """Return current circuit breaker state for all agents."""
+    return get_circuit_status()
+
+
+@router.get("/governance/rate-limits")
+async def get_rate_limits(user=Depends(get_current_user)):
+    """Return current rate limit usage per agent."""
+    return get_rate_limit_status()
+
+
+@router.get("/governance/summary")
+async def governance_summary(user=Depends(get_current_user)):
+    """Return aggregate governance health: escalations, overrides, SLA breaches."""
+    return get_governance_summary()
+
+
+class OverrideRequest(BaseModel):
+    agent_id: str
+    session_id: str
+    original_recommendation: str
+    override_decision: str
+    reason: str
+
+
+@router.post("/governance/override")
+async def human_override(request: OverrideRequest, user=Depends(get_current_user)):
+    """Record a human override of an agent recommendation (full audit trail)."""
+    entry = record_human_override(
+        agent_id=request.agent_id,
+        session_id=request.session_id,
+        original_recommendation=request.original_recommendation,
+        override_decision=request.override_decision,
+        override_by=getattr(user, "email", "unknown"),
+        reason=request.reason,
+    )
+    return {"recorded": True, "audit_event": entry}
