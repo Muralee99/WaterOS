@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # ðŸ’§ WaterOS
 
@@ -967,7 +967,164 @@ Decision Agent:
 
 ---
 
-## ðŸ† Hackathon Highlights
+
+## Shield Agent Governance
+
+WaterOS implements a four-layer governance framework in `backend/app/agents/governance/` that wraps every agent execution ensuring safety, accountability, and human control.
+
+```
+Every agent.execute() call runs this pipeline:
+================================================================
+ 1. Rate Limit Check       -- per-agent sliding window (60s)
+ 2. Input Guardrails       -- injection detection, range validation
+ 3. Agent Logic            -- Gemini 1.5 Pro + domain tools
+ 4. Output Guardrails      -- required fields, confidence floor, contradiction check
+ 5. Governance Rules       -- human-in-the-loop, escalation, SLA monitoring
+ 6. Circuit Breaker        -- trips after 3 failures, auto-resets in 120s
+================================================================
+```
+
+### Layer 1 - Agent Instructions (`instructions.py`)
+
+Every agent carries a formal instruction set injected directly into Gemini via `system_instruction` on every call.
+
+| Component | Description |
+|-----------|-------------|
+| **Role** | Named specialist role (e.g. "Flood Risk Specialist") |
+| **Domain** | Area of expertise the agent operates within |
+| **System Prompt** | Full behavioural instructions — what to assert, cite, how to express uncertainty |
+| **Forbidden Actions** | Explicit list of things the agent must never do |
+| **Required Output Fields** | Fields that must be present — validated by output guardrails |
+| **Confidence Floor** | Minimum confidence below which result is flagged for human review |
+| **Escalation Triggers** | Risk levels that automatically route to human review |
+
+Example — Emergency Agent forbidden actions:
+```python
+"forbidden_actions": [
+    "Do not activate emergency protocols without HIGH/CRITICAL signal from a specialist agent",
+    "Do not issue public evacuation orders autonomously — require human_approval flag = True",
+    "Do not downgrade a HIGH risk to LOW without specialist agent re-assessment",
+],
+"human_in_the_loop": True,
+```
+
+### Layer 2 - Guardrails (`guardrails.py`)
+
+**Input guardrails** — run before agent executes:
+- Code injection detection (`eval`, `exec`, `os.system`, `__import__`)
+- Numeric range validation (river levels 0-30m, rainfall >= 0)
+- Circuit breaker check — blocks calls when agent is in OPEN state
+
+**Output guardrails** — run after agent returns:
+- All `output_required_fields` must be present or execution is rejected
+- Confidence must meet the agent's `confidence_floor` or result is blocked
+- WQI contradiction check: WQI < 50 cannot be marked WHO-compliant
+- Emergency: HIGH/CRITICAL alerts must carry `human_approval_required = True`
+
+**Circuit Breaker:**
+```
+3 consecutive failures  -->  OPEN (all calls blocked)
+         120 seconds
+AUTO-RESET              -->  CLOSED (normal operation)
+```
+
+### Layer 3 - Protocols (`protocols.py`)
+
+**A2A Message Envelope (v1.0)** wraps every agent-to-agent call:
+```json
+{
+  "protocol_version": "1.0",
+  "message_id": "uuid",
+  "caller": "flood_agent",
+  "callee": "rainfall_agent",
+  "trust_level": 3,
+  "ttl_ms": 30000
+}
+```
+
+**Agent Trust Hierarchy:**
+
+| Level | Agents |
+|-------|--------|
+| 5 | Global Coordinator |
+| 4 | Decision Agent, Emergency Agent |
+| 3 | Flood Agent, Water Quality Agent |
+| 2 | Rainfall, Reservoir, Climate, Country, Groundwater, Infrastructure, Leak Detection |
+| 1 | Sensor Intelligence, Report Generation |
+
+**Allowed A2A Invocation Topology** (enforced at runtime — violations are blocked and logged):
+```
+global_coordinator  --> country_agent, climate_agent, decision_agent
+decision_agent      --> flood_agent, emergency_agent, rainfall_agent,
+                        reservoir_agent, water_quality_agent, infrastructure_agent
+flood_agent         --> rainfall_agent, reservoir_agent
+water_quality_agent --> sensor_intelligence
+country_agent       --> flood_agent, water_quality_agent, groundwater_agent
+emergency_agent     --> (leaf node -- cannot invoke other agents)
+```
+
+**Rate Limits** (sliding 60-second window):
+
+| Agent | Calls / 60s |
+|-------|-------------|
+| Sensor Intelligence | 20 |
+| Rainfall Agent | 15 |
+| Country Agent | 12 |
+| Flood, Reservoir, Water Quality | 10 |
+| Decision Agent | 6 |
+| Emergency, Climate, Global Coordinator | 4-5 |
+
+### Layer 4 - Governance Rules (`governance.py`)
+
+**Human-in-the-Loop** — result flagged `human_review_required = True` when:
+- Confidence < 0.65
+- Risk level is HIGH or CRITICAL
+- Any public alert or evacuation order is generated
+- Agent is in the always-HIL list (emergency_agent, decision_agent)
+
+**SLA Monitoring:**
+```
+> 5,000ms   --> WARNING logged
+> 10,000ms  --> SLA BREACH + governance_report.sla_breach = True
+```
+
+**Audit Events** captured for every run:
+
+| Event | Trigger |
+|-------|---------|
+| `AGENT_RUN_COMPLETE` | Every execution |
+| `HIGH_RISK_ESCALATION` | Risk = high or critical |
+| `LOW_CONFIDENCE` | Confidence below 0.65 |
+| `HUMAN_LOOP_AGENT` | Emergency / Decision agent runs |
+| `PUBLIC_ACTION_GATE` | Evacuation or public alert output |
+| `SLA_BREACH` | Latency > 10s |
+| `HUMAN_OVERRIDE` | Human overrides a recommendation |
+
+**Human Override** — full audit trail:
+```bash
+POST /api/v1/agents/governance/override
+{
+  "agent_id": "flood_agent",
+  "original_recommendation": "Evacuate Kamrup district immediately",
+  "override_decision": "Issue watch-only -- evacuation deferred 6 hours",
+  "reason": "NDRF teams not yet positioned"
+}
+```
+
+### Governance REST API
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /agents/governance/instructions` | All 14 agent system prompts and constraints |
+| `GET /agents/governance/instructions/{id}` | Single agent full instruction set |
+| `GET /agents/governance/audit` | Full audit log, filterable by agent and event type |
+| `GET /agents/governance/circuit-breakers` | Circuit breaker state for all agents |
+| `GET /agents/governance/rate-limits` | Rate limit usage per agent |
+| `GET /agents/governance/summary` | Escalations, overrides, SLA breaches summary |
+| `POST /agents/governance/override` | Record human override with full provenance |
+
+---
+## Hackathon Highlights
 
 This project was built for **Google AI Hackathon 2026** and demonstrates:
 
